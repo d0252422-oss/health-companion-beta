@@ -2,9 +2,9 @@
 <html lang="zh-Hant">
  <head><meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="health-companion-build" content="20260926-daily-sync-05">
+  <meta name="health-companion-build" content="20260926-health-state-resilience-06">
   <title>健康陪跑 Health Companion</title>
-  <script src="scripts/build-version.js?v=20260926-daily-sync-05"></script>
+  <script src="scripts/build-version.js?v=20260926-health-state-resilience-06"></script>
   <script id="lucide-sdk" async src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <style>
@@ -721,11 +721,11 @@
    </div>
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="scripts/manual-sql-config.js?v=20260926-daily-sync-05"></script>
-  <script src="scripts/core-ux-contract.js?v=20260926-daily-sync-05"></script>
-  <script src="scripts/local-engine-web.js?v=20260926-daily-sync-05"></script>
-  <script src="scripts/web-view-state.js?v=20260926-daily-sync-05"></script>
-  <script src="scripts/manual-observation-web.js?v=20260926-daily-sync-05"></script>
+  <script src="scripts/manual-sql-config.js?v=20260926-health-state-resilience-06"></script>
+  <script src="scripts/core-ux-contract.js?v=20260926-health-state-resilience-06"></script>
+  <script src="scripts/local-engine-web.js?v=20260926-health-state-resilience-06"></script>
+  <script src="scripts/web-view-state.js?v=20260926-health-state-resilience-06"></script>
+  <script src="scripts/manual-observation-web.js?v=20260926-health-state-resilience-06"></script>
   <script>
     const APP_STARTED_AT=performance.now();
     const PERF_DEBUG=new URLSearchParams(location.search).get("debugPerf")==="1";
@@ -869,7 +869,7 @@ async function sessionPost(action,payload={}){
     if(!e.code)e.code=errorType;perfLog("api-error",{requestId,action,durationMs:Math.round(performance.now()-started),errorType});if(handleAccessError(e))throw e;if(isSessionError(e)&&(currentUser||sessionToken)){clearPersonalState();showLogin();}throw e;
   }finally{clearTimeout(timer)}
 }
-    async function apiGet(action,params={}){try{return await sessionPost(action,params);}catch(error){if(!["INTERNAL_ERROR","SERVICE_UNAVAILABLE"].includes(error?.code))throw error;await new Promise(resolve=>setTimeout(resolve,650));return sessionPost(action,params);}}
+    async function apiGet(action,params={}){try{return await sessionPost(action,params);}catch(error){const retryable=error?.retryable===true||["DB_BUSY_RETRYABLE","DB_TIMEOUT_RETRYABLE","DB_CONFLICT_RETRYABLE","INTERNAL_ERROR","SERVICE_UNAVAILABLE"].includes(error?.code);if(!retryable)throw error;await new Promise(resolve=>setTimeout(resolve,900));return sessionPost(action,params);}}
     async function apiPost(action,data={}){return sessionPost(action,data);}
     async function createExternalSession(action,tokenField,token){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),CONFIG.API_TIMEOUT);try{const res=await fetch(CONFIG.API_BASE_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,[tokenField]:token}),signal:controller.signal});if(!res.ok)throw new Error(`HTTP ${res.status}`);const data=unwrapApiResponse(await res.json());if(data?.sessionToken){if(data.sessionToken!==sessionToken){purgePrivateClientState();resetIdentityBoundView();}sessionToken=data.sessionToken;localStorage.setItem("healthCompanionSessionToken",sessionToken);localStorage.setItem("healthCompanionAuthProvider",data.authProvider||"google");localStorage.setItem("healthCompanionSessionExpiresAt",String(Date.now()+Number(data.expiresIn||2592000)*1000));}return data;}finally{clearTimeout(timer)}}
     async function createSession(idToken){return createExternalSession("createSession","idToken",idToken);}

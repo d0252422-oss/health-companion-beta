@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
 
-  const BUILD_ID = '20260926-daily-sync-05';
+  const BUILD_ID = '20260926-health-state-resilience-06';
   const RECOVERY_PREFIX = 'healthCompanionBuildRecovery:';
 
   function recoveryUrl(href, liveBuildId) {
