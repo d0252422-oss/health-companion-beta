@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
 
-  const BUILD_ID = '20260925-score-convergence-01';
+  const BUILD_ID = '20260926-daily-sync-05';
   const RECOVERY_PREFIX = 'healthCompanionBuildRecovery:';
 
   function recoveryUrl(href, liveBuildId) {
