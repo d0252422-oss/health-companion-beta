@@ -2,9 +2,9 @@
 <html lang="zh-Hant">
  <head><meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="health-companion-build" content="20260926-health-state-resilience-06">
+  <meta name="health-companion-build" content="20261002-web-7d-partial-readback-01">
   <title>健康陪跑 Health Companion</title>
-  <script src="scripts/build-version.js?v=20260926-health-state-resilience-06"></script>
+  <script src="scripts/build-version.js?v=20261002-web-7d-partial-readback-01"></script>
   <script id="lucide-sdk" async src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <style>
@@ -74,9 +74,10 @@
     .quick-option span{display:none}
     .quick-option:disabled{cursor:not-allowed;opacity:.5;background:var(--bg-secondary)}
     .data-state-banner{display:none;margin-bottom:12px;padding:10px 12px;border:1px solid var(--border-color);border-radius:11px;background:var(--bg-card);color:var(--text-secondary);font-size:.76rem}
-    .data-state-banner[data-state="loading"],.data-state-banner[data-state="updating"],.data-state-banner[data-state="empty"],.data-state-banner[data-state="error"]{display:flex;align-items:center;gap:8px}
+    .data-state-banner[data-state="loading"],.data-state-banner[data-state="updating"],.data-state-banner[data-state="empty"],.data-state-banner[data-state="partial"],.data-state-banner[data-state="error"]{display:flex;align-items:center;gap:8px}
     .data-state-banner[data-state="loading"]:before,.data-state-banner[data-state="updating"]:before{content:"";width:14px;height:14px;flex:none;border:2px solid var(--border-color);border-top-color:var(--accent-primary);border-radius:50%;animation:state-spin .8s linear infinite}
     .data-state-banner[data-state="error"]{border-color:color-mix(in srgb,var(--status-danger) 45%,var(--border-color));color:var(--status-danger)}
+    .data-state-banner[data-state="partial"]{border-color:color-mix(in srgb,var(--status-warning) 45%,var(--border-color))}
     @keyframes state-spin{to{transform:rotate(360deg)}}
   </style>
   </head>
@@ -721,11 +722,11 @@
    </div>
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="scripts/manual-sql-config.js?v=20260926-health-state-resilience-06"></script>
-  <script src="scripts/core-ux-contract.js?v=20260926-health-state-resilience-06"></script>
-  <script src="scripts/local-engine-web.js?v=20260926-health-state-resilience-06"></script>
-  <script src="scripts/web-view-state.js?v=20260926-health-state-resilience-06"></script>
-  <script src="scripts/manual-observation-web.js?v=20260926-health-state-resilience-06"></script>
+  <script src="scripts/manual-sql-config.js?v=20261002-web-7d-partial-readback-01"></script>
+  <script src="scripts/core-ux-contract.js?v=20261002-web-7d-partial-readback-01"></script>
+  <script src="scripts/local-engine-web.js?v=20261002-web-7d-partial-readback-01"></script>
+  <script src="scripts/web-view-state.js?v=20261002-web-7d-partial-readback-01"></script>
+  <script src="scripts/manual-observation-web.js?v=20261002-web-7d-partial-readback-01"></script>
   <script>
     const APP_STARTED_AT=performance.now();
     const PERF_DEBUG=new URLSearchParams(location.search).get("debugPerf")==="1";
@@ -846,7 +847,7 @@
     async function refreshConnectorStatus(){if(manualSqlEnabled())return false;const endpoint=betaIngestionEndpoint(),identity=identitySnapshot();if(!endpoint||!identity.token)return false;try{const response=await fetch(`${endpoint}/v1/mobile/connectors/status`,{headers:{"Authorization":`Bearer ${identity.token}`}});if(!response.ok)return false;const connectors=(await response.json()).connectors||[];if(!identitySnapshotCurrent(identity))return false;const latest=[...connectors].sort((a,b)=>String(b.last_attempt_at||"").localeCompare(String(a.last_attempt_at||"")))[0];if(!latest)return false;setValue("health-connector-status",latest.last_result||"UNKNOWN");setValue("health-connector-last-sync",latest.last_success_at||"—");setValue("health-connector-last-result",latest.last_result||"—");return true;}catch{return false;}}
     function renderTesterConnector(platform=detectedTesterPlatform()){const android=platform==="ANDROID",ios=platform==="IOS";document.getElementById("android-connector-card").hidden=!android;document.getElementById("ios-connector-card").hidden=!ios;setValue("health-connector-recommendation",android?"建議：Android Beta + Health Connect":ios?"建議：Apple Health 健康同步捷徑":"請選擇你的手機平台");const apk=safeTesterLink(CONFIG.ANDROID_BETA_APK_URL),shortcut=safeTesterLink(CONFIG.IOS_SHORTCUT_SHARE_URL),apkLink=document.getElementById("android-beta-download"),shortcutLink=document.getElementById("ios-shortcut-link");apkLink.hidden=!apk;document.getElementById("android-beta-pending").hidden=Boolean(apk);if(apk)apkLink.href=apk;shortcutLink.hidden=!shortcut;document.getElementById("ios-shortcut-pending").hidden=Boolean(shortcut);if(shortcut)shortcutLink.href=shortcut;setValue("android-apk-version",CONFIG.ANDROID_BETA_APK_VERSION||"準備中");setValue("android-apk-metadata",CONFIG.ANDROID_BETA_APK_SIZE_BYTES?`${(CONFIG.ANDROID_BETA_APK_SIZE_BYTES/1048576).toFixed(1)} MB · SHA-256 ${String(CONFIG.ANDROID_BETA_APK_SHA256||"").slice(0,12)}…`:"");setValue("ios-shortcut-version",CONFIG.IOS_SHORTCUT_VERSION||"準備中");document.querySelectorAll(".connector-version").forEach(node=>node.textContent=CONFIG.CONNECTOR_VERSION||"—");}
     function setConnectionState(state){const labels={connected:"已連線",connecting:"連線中",error:"資料載入失敗",notConfigured:"未設定"};["sync-dot","settings-status-dot"].forEach(id=>{const el=document.getElementById(id);if(el)el.className=`status-dot ${state}`;});document.getElementById("connection-label").textContent=labels[state];document.getElementById("technical-api-status").textContent=labels[state];const provider=document.getElementById('technical-provider-name');if(provider)provider.textContent=manualSqlEnabled()?(HOSTED_MANUAL_SQL_ENABLED?'PostgreSQL · Hosted（設定）':'PostgreSQL · 本機（設定）'):'Apps Script / Google Sheets（設定）';if(manualSqlEnabled())renderManualProviderStatus();}
-    function setDashboardDataState(state,message=""){const labels={loading:"數據載入中，請稍候…",updating:"數據更新中，請稍候…",ready:"",empty:"目前尚無資料",error:"資料暫時無法更新"},banner=document.getElementById("dashboard-data-state"),screen=document.getElementById("dashboard-screen");if(!banner||!screen)return;screen.dataset.dataState=state;banner.dataset.state=state;banner.textContent=message||labels[state]||"";screen.querySelectorAll(".score-panel,.kpi-card,.chart-card,.coach-panel,.dashboard-nutrition-summary").forEach(card=>card.dataset.dataState=state);if(state==="loading"&&!appState.dashboard)for(const id of ["kpi-weight-detail","body-current-note","body-fat-note","sleep-last-note","sleep-score-note","activity-steps-note","activity-total-note","dashboard-nutrition-calories","dashboard-nutrition-protein","dashboard-nutrition-carbs","dashboard-nutrition-fat","dashboard-nutrition-meals"])setValue(id,labels.loading);if(activeScreen==="metric-detail-screen")renderMetricDetail();}
+    function setDashboardDataState(state,message=""){const labels={loading:"數據載入中，請稍候…",updating:"數據更新中，請稍候…",ready:"",empty:"目前尚無資料",partial:"部分日期的健康分析更新失敗；已顯示可用的健康資料。",error:"資料暫時無法更新"},banner=document.getElementById("dashboard-data-state"),screen=document.getElementById("dashboard-screen");if(!banner||!screen)return;screen.dataset.dataState=state;banner.dataset.state=state;banner.textContent=message||labels[state]||"";screen.querySelectorAll(".score-panel,.kpi-card,.chart-card,.coach-panel,.dashboard-nutrition-summary").forEach(card=>card.dataset.dataState=state);if(state==="loading"&&!appState.dashboard)for(const id of ["kpi-weight-detail","body-current-note","body-fat-note","sleep-last-note","sleep-score-note","activity-steps-note","activity-total-note","dashboard-nutrition-calories","dashboard-nutrition-protein","dashboard-nutrition-carbs","dashboard-nutrition-fat","dashboard-nutrition-meals"])setValue(id,labels.loading);if(activeScreen==="metric-detail-screen")renderMetricDetail();}
     function unwrapApiResponse(response){if(response&&response.ok===true)return response.data;const error=response?.error;const e=new Error(readableError(error||response?.message));e.code=typeof error==="string"?error:error?.code||response?.code;throw e;}
     function classifyRequestError(error){if(error?.name==="AbortError"||error?.code==="REQUEST_TIMEOUT")return "REQUEST_TIMEOUT";if(error instanceof TypeError||/failed to fetch|networkerror|load failed/i.test(String(error?.message||"")))return "NETWORK_FAILURE";if(/^HTTP \d+/.test(String(error?.message||"")))return "SERVER_ERROR";if(error?.code)return String(error.code);return "OTHER";}
     function isWriteStatusUnknownError(error){return ["NETWORK_FAILURE","REQUEST_TIMEOUT","MALFORMED_RESPONSE"].includes(classifyRequestError(error));}

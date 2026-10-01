@@ -149,10 +149,12 @@
 
   function timelineReadState(rows, today = null) {
     const candidates = [...(Array.isArray(rows) ? rows : []), ...(today && typeof today === "object" ? [today] : [])];
-    if (candidates.some((row) => rowStaleReasons(row).some((reason) => terminalStaleReasons.has(reason)))) return "error";
+    const hasMetric = candidates.some((row) => timelineMetricKeys.some((key) => finiteNumber(row?.[key]) !== null));
+    // A failed analysis on one day must not hide available data for the whole range.
+    if (candidates.some((row) => rowStaleReasons(row).some((reason) => terminalStaleReasons.has(reason)))) return hasMetric ? "partial" : "error";
     if (candidates.some((row) => [row?.dataStatus, row?.sleepDataStatus, row?.activityDataStatus, row?.sleepAnalysisDataStatus, row?.activityAnalysisDataStatus, row?.healthStatus].includes("STALE")
       || rowStaleReasons(row).length)) return "updating";
-    if (candidates.some((row) => timelineMetricKeys.some((key) => finiteNumber(row?.[key]) !== null))) return "ready";
+    if (hasMetric) return "ready";
     return "empty";
   }
 
