@@ -170,8 +170,9 @@
     return "empty";
   }
 
-  function metricReadState(metric, rows, fallbackState = "ready") {
-    const candidates = Array.isArray(rows) ? rows : [];
+  function metricReadState(metric, rows, fallbackState = "ready", range = null) {
+    const candidates = (Array.isArray(rows) ? rows : []).filter((row) => !range
+      || (row?.date >= range.start && row?.date <= range.end));
     const hasValue = candidates.some((row) => finiteNumber(row?.[metric]) !== null);
     if (!candidates.length) return ["loading", "updating", "error"].includes(fallbackState) ? fallbackState : "empty";
     const domain = ["sleepHours", "sleepScore"].includes(metric) ? "sleep"
@@ -184,7 +185,10 @@
       : domain === "activity" ? ["activityDataStatus"]
       : domain === "nutrition" ? ["nutritionDataStatus"]
       : domain === "health" ? ["healthStatus"] : [];
-    if (candidates.some((row) => terminalStaleReasons.has(row?.[reasonKey]))) return "error";
+    // A failed analysis for one date must not classify already-readable values
+    // on this or another date as a failed metric read. Preserve the failure as
+    // a partial warning while keeping the available daily values visible.
+    if (candidates.some((row) => terminalStaleReasons.has(row?.[reasonKey]))) return hasValue ? "partial" : "error";
     if (candidates.some((row) => statusKeys.some((key) => row?.[key] === "STALE") || row?.[reasonKey])) return "updating";
     return hasValue ? "ready" : "empty";
   }
