@@ -162,12 +162,14 @@
     const targetDate = isValidDateKey(date) ? date : null;
     if (!targetDate) return "error";
     const targetRow = (Array.isArray(rows) ? rows : []).find((row) => recordLocalDate(row, timeZone) === targetDate);
-    if (terminalStaleReasons.has(targetRow?.nutritionStaleReason) || terminalStaleReasons.has(targetRow?.healthStaleReason)) return "error";
-    if (targetRow?.nutritionDataStatus === "STALE" || targetRow?.nutritionStaleReason || targetRow?.healthStatus === "STALE" || targetRow?.healthStaleReason) return "updating";
     const targetMeals = visibleMeals(records).filter((record) => recordLocalDate(record, timeZone) === targetDate);
-    if (targetMeals.length || ["caloriesIntake", "protein", "carbs", "fat", "nutritionMealCount"]
-      .some((key) => finiteNumber(targetRow?.[key]) !== null)) return "ready";
-    return "empty";
+    const hasValue = Boolean(targetMeals.length) || ["caloriesIntake", "protein", "carbs", "fat", "nutritionMealCount"]
+      .some((key) => finiteNumber(targetRow?.[key]) !== null);
+    // Score recomputation is independent of saved meals. Only the nutrition
+    // projection state may downgrade this readback, and existing values remain visible.
+    if (terminalStaleReasons.has(targetRow?.nutritionStaleReason)) return hasValue ? "partial" : "error";
+    if (targetRow?.nutritionDataStatus === "STALE" || targetRow?.nutritionStaleReason) return "updating";
+    return hasValue ? "ready" : "empty";
   }
 
   function metricReadState(metric, rows, fallbackState = "ready", range = null) {
