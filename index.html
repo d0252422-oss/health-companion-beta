@@ -2,9 +2,9 @@
 <html lang="zh-Hant">
  <head><meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="health-companion-build" content="20261002-web-7d-partial-readback-01">
+  <meta name="health-companion-build" content="20261003-beta-metric-readback-01">
   <title>健康陪跑 Health Companion</title>
-  <script src="scripts/build-version.js?v=20261002-web-7d-partial-readback-01"></script>
+  <script src="scripts/build-version.js?v=20261003-beta-metric-readback-01"></script>
   <script id="lucide-sdk" async src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <style>
@@ -79,6 +79,7 @@
     .data-state-banner[data-state="error"]{border-color:color-mix(in srgb,var(--status-danger) 45%,var(--border-color));color:var(--status-danger)}
     .data-state-banner[data-state="partial"]{border-color:color-mix(in srgb,var(--status-warning) 45%,var(--border-color))}
     @keyframes state-spin{to{transform:rotate(360deg)}}
+    .partial-state{padding:var(--space-4);border:1px solid color-mix(in srgb,var(--status-warning) 55%,var(--border-color));border-radius:12px;background:color-mix(in srgb,var(--status-warning) 8%,var(--bg-card));color:var(--text-primary);font-size:.8rem;line-height:1.55}.partial-state p{margin:0 0 8px}.partial-state .secondary-button{min-height:40px}
   </style>
   </head>
  <body data-template-id="__page-root">
@@ -722,11 +723,11 @@
    </div>
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="scripts/manual-sql-config.js?v=20261002-web-7d-partial-readback-01"></script>
-  <script src="scripts/core-ux-contract.js?v=20261002-web-7d-partial-readback-01"></script>
-  <script src="scripts/local-engine-web.js?v=20261002-web-7d-partial-readback-01"></script>
-  <script src="scripts/web-view-state.js?v=20261002-web-7d-partial-readback-01"></script>
-  <script src="scripts/manual-observation-web.js?v=20261002-web-7d-partial-readback-01"></script>
+  <script src="scripts/manual-sql-config.js?v=20261003-beta-metric-readback-01"></script>
+  <script src="scripts/core-ux-contract.js?v=20261003-beta-metric-readback-01"></script>
+  <script src="scripts/local-engine-web.js?v=20261003-beta-metric-readback-01"></script>
+  <script src="scripts/web-view-state.js?v=20261003-beta-metric-readback-01"></script>
+  <script src="scripts/manual-observation-web.js?v=20261003-beta-metric-readback-01"></script>
   <script>
     const APP_STARTED_AT=performance.now();
     const PERF_DEBUG=new URLSearchParams(location.search).get("debugPerf")==="1";
@@ -944,14 +945,14 @@ async function sessionPost(action,payload={}){
     function renderMetricDetail(metric=activeMetricDetail){
       const config=metricDetailConfig(metric);activeMetricDetail=config.metric;
       const range=rangeDates(),rows=fillDailyGaps(appState.healthTimeline,{start:range.start,end:range.end}),available=rows.filter(row=>num(row[config.metric])!==null),latestRow=available.at(-1),latestValue=latestRow?latestRow[config.metric]:null;
-      const dashboardState=document.getElementById("dashboard-screen")?.dataset.dataState||(!appState.dashboard?"loading":"ready"),detailState=HealthCoreUX.metricReadState(config.metric,appState.healthTimeline,dashboardState),nonterminalWithoutData=!available.length&&["loading","updating","error"].includes(detailState);
+      const dashboardState=document.getElementById("dashboard-screen")?.dataset.dataState||(!appState.dashboard?"loading":"ready"),detailState=HealthCoreUX.metricReadState(config.metric,appState.healthTimeline,dashboardState,range),nonterminalWithoutData=!available.length&&["loading","updating","error"].includes(detailState);
       setValue("metric-detail-label",config.title);setValue("metric-detail-title",`${config.title}詳情`);setValue("metric-detail-current",metricDisplay(config.metric,latestValue,{full:true}));renderMetricManualAction(config.metric,latestRow?.date||getLocalDateString());
       setValue("metric-detail-latest",latestRow?`${recordDateLabel(latestRow.date)} · ${config.description}`:detailState==="error"?"資料暫時無法更新。":detailState==="updating"?"數據更新中，請稍候…":detailState==="loading"?"數據載入中，請稍候…":`${config.description} 目前所選期間尚無資料。`);
       const source=document.getElementById("metric-detail-source"),sourceLabels=[];if(latestRow){const label=metricSourceLabel(latestRow,config.metric);if(label)sourceLabels.push(`來源：${label}`);if(config.metric==="healthScore"&&num(latestRow.dataCompleteness)!==null)sourceLabels.push(`完整度：${formatHealthCompleteness(latestRow.dataCompleteness)}`);if(config.metric==="healthScore"&&latestRow.scoreConfidence)sourceLabels.push(`信心：${latestRow.scoreConfidence}`);}source.innerHTML=sourceLabels.map(label=>`<span class="metric-source-badge">${escapeHtml(label)}</span>`).join("");
       document.querySelectorAll("[data-metric-range]").forEach(button=>{const active=button.dataset.metricRange===globalDateRange.preset;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});
       if(nonterminalWithoutData){document.getElementById("metric-detail-chart").innerHTML=detailState==="error"?'<div class="error-state">資料暫時無法更新</div>':'<div class="skeleton" aria-hidden="true"></div>';document.getElementById("metric-detail-list").innerHTML=`<div class="record-date-note">${detailState==="error"?"請使用上方重新整理再試一次。":"資料尚未完成載入。"}</div>`;}
       else{renderTrendChart("metric-detail-chart",rows,{metric:config.metric,type:config.type||"line",preserveGaps:true});document.getElementById("metric-detail-list").innerHTML=rows.length?[...rows].reverse().map(row=>{const source=metricSourceLabel(row,config.metric),sourceLabel=source==="穿戴裝置同步"?"穿戴裝置同步 · 唯讀":source||"無資料";return `<div class="metric-detail-row"><time datetime="${escapeHtml(row.date)}">${escapeHtml(longDateLabel(row.date))}</time><strong>${escapeHtml(metricDisplay(config.metric,row[config.metric],{full:true}))}</strong><span>${escapeHtml(sourceLabel)}</span>${metricDetailManualAction(row,config.metric)}</div>`;}).join(""):`<div class="empty-state">所選期間尚無資料。</div>`;}
-      if(["loading","updating","error"].includes(detailState))detailReadState("metric-detail-screen",detailState);else detailReadState("metric-detail-screen",available.length?"success":"empty");
+      if(["loading","updating","error","partial"].includes(detailState))detailReadState("metric-detail-screen",detailState);else detailReadState("metric-detail-screen",available.length?"success":"empty");
     }
     function shortDateLabel(date){const parts=String(date||"").split("-");return parts.length===3?`${Number(parts[1])}/${Number(parts[2])}`:String(date||"—");}
     function longDateLabel(date){const parts=String(date||"").split("-");return parts.length===3?`${Number(parts[1])} 月 ${Number(parts[2])} 日`:String(date||"—");}

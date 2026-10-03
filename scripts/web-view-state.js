@@ -54,12 +54,12 @@ function detailReadState(screen, state, message = '') {
   target.dataset.readState = state;
   let notice = document.getElementById(screen + '-read-state');
   if (!notice) { notice = document.createElement('div'); notice.id = screen + '-read-state'; target.prepend(notice); }
-  notice.className = state === 'error' || state === 'stale' ? 'error-state' : 'record-date-note';
+  notice.className = state === 'partial' ? 'partial-state' : state === 'error' || state === 'stale' ? 'error-state' : 'record-date-note';
   notice.setAttribute('role', state === 'error' ? 'alert' : 'status');
   notice.replaceChildren();
-  const labels = {loading:'數據載入中，請稍候…',updating:'數據更新中，請稍候…',empty:'目前尚無資料。',success:'所選期間資料已更新。',stale:'顯示上次資料；本次更新未完成。',error:'資料暫時無法更新。'};
+  const labels = {loading:'數據載入中，請稍候…',updating:'數據更新中，請稍候…',empty:'目前尚無資料。',success:'所選期間資料已更新。',partial:'部分日期的分析更新失敗；已顯示可用的數值。缺少數值的日期仍保留空白。',stale:'顯示上次資料；本次更新未完成。',error:'資料暫時無法更新。'};
   const text = document.createElement('p'); text.textContent = (labels[state] || '') + (message ? ' ' + message : ''); notice.append(text);
-  if (state === 'error' || state === 'stale') {
+  if (state === 'error' || state === 'stale' || state === 'partial') {
     const retry = document.createElement('button'); retry.type = 'button'; retry.className = 'secondary-button'; retry.textContent = '重新整理';
     retry.onclick = () => (screen === 'metric-detail-screen'
       ? loadRange(globalDateRange,{force:true})
