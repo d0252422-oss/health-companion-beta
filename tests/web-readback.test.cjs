@@ -140,7 +140,7 @@ test('public build markers and partial warning stay in sync', () => {
   assert.ok(html.includes(`name="health-companion-build" content="${manifest.buildId}"`));
   assert.ok(buildScript.includes(`const BUILD_ID = '${manifest.buildId}'`));
   assert.ok(html.includes('data-state="partial"'));
-  assert.ok(html.includes('部分日期的健康分析更新失敗；已顯示可用的健康資料。'));
+  assert.ok(html.includes('部分日期的健康分析未完成；已顯示可用的健康資料。'));
   assert.ok(!html.includes('20260926-health-state-resilience-06'));
 });
 
