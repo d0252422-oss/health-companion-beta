@@ -66,6 +66,18 @@ test('a failed day outside the selected range does not contaminate another perio
   assert.equal(ux.metricReadState('sleepHours', rows, 'ready', { start: '2026-09-27', end: '2026-10-03' }), 'partial');
 });
 
+test('saved nutrition remains readable when only the health score recompute fails', () => {
+  const rows = [{ date: '2026-10-02', healthStaleReason: 'RECOMPUTE_FAILED', caloriesIntake: 1800 }];
+  assert.equal(ux.nutritionReadState([], rows, '2026-10-02'), 'ready');
+  assert.equal(ux.nutritionReadState([], [{ date: '2026-10-02', healthStaleReason: 'RECOMPUTE_FAILED' }], '2026-10-02'), 'empty');
+});
+
+test('failed nutrition projection retains existing values with a partial warning', () => {
+  const rows = [{ date: '2026-10-02', caloriesIntake: 1800, nutritionStaleReason: 'RECOMPUTE_FAILED' }];
+  assert.equal(ux.nutritionReadState([], rows, '2026-10-02'), 'partial');
+  assert.equal(ux.nutritionReadState([], [{ date: '2026-10-02', nutritionStaleReason: 'RECOMPUTE_FAILED' }], '2026-10-02'), 'error');
+});
+
 test('metric detail page renders partial state instead of a whole-page error', () => {
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
   const stateScript = fs.readFileSync(path.join(root, 'scripts/web-view-state.js'), 'utf8');
