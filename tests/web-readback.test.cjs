@@ -24,6 +24,53 @@ test('a healthy range remains ready', () => {
   assert.equal(ux.timelineReadState([{ date: '2026-09-29', steps: 5649 }]), 'ready');
 });
 
+test('stale score analysis preserves the available metric summary', () => {
+  const rows = [
+    { date: '2026-09-29', sleepHours: 6.5, steps: 3644, caloriesIntake: 1800 },
+    { date: '2026-10-03', healthStatus: 'STALE', trainingSets: 4 },
+  ];
+  assert.equal(ux.timelineReadState(rows), 'partial');
+  assert.deepEqual(ux.latestSummaryMetric(rows, 'sleepHours', '2026-10-03'), { date: '2026-09-29', value: 6.5 });
+  assert.deepEqual(ux.latestSummaryMetric(rows, 'trainingSets', '2026-10-03'), { date: '2026-10-03', value: 4 });
+  assert.equal(ux.latestSummaryMetric(rows, 'sleepHours', '2026-09-28'), null);
+  assert.equal(ux.latestSummaryMetric(rows, 'recoveryScore', '2026-10-03'), null);
+});
+
+test('training days are counted by Asia/Taipei date, not session count', () => {
+  const rows = [
+    { date: '2026-10-01', trainingSessions: 2, trainingSets: 12 },
+    { date: '2026-10-01', trainingSessions: 1, trainingSets: 3 },
+    { date: '2026-10-02', trainingSessions: 1 },
+    { date: '2026-10-03', trainingSessions: 0, trainingSets: 0 },
+    { date: '2026-10-03', trainingSessions: 1, deleted: true },
+    { date: '2026-10-04', trainingSessions: 1 },
+  ];
+  assert.equal(ux.trainingDayCount(rows, '2026-10-03'), 2);
+});
+
+test('chart connects only actual values across null dates and trends over those values', () => {
+  const trend = ux.linearTrend([10.3, null, 6.5, null, 6.6, 5.6, null]);
+  assert.ok(trend);
+  assert.equal(trend.startIndex, 0);
+  assert.equal(trend.endIndex, 5);
+  assert.ok(trend.startValue > trend.endValue);
+  assert.equal(ux.linearTrend([null, 5.6, null]), null);
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  assert.match(html, /visiblePoints=points\.filter\(point=>point\.y!==null\)/);
+  assert.match(html, /class="trend-trendline"/);
+  assert.match(html, /class="trend-no-data"/);
+});
+
+test('summary distinguishes unscored dimensions from saved raw metrics', () => {
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  for (const id of ['summary-sleep', 'summary-steps', 'summary-training', 'summary-nutrition']) {
+    assert.match(html, new RegExp(`id="${id}"`));
+  }
+  assert.match(html, /今天的健康分數尚未產生/);
+  assert.match(html, /今日分析未完成/);
+  assert.match(html, /trainingDayCount\(timeline,summaryDate\)/);
+});
+
 test('a failed analysis day keeps a later sleep value readable', () => {
   const rows = [
     { date: '2026-09-27', sleepStaleReason: 'RECOMPUTE_FAILED' },

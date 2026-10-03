@@ -153,9 +153,45 @@
     // A failed analysis on one day must not hide available data for the whole range.
     if (candidates.some((row) => rowStaleReasons(row).some((reason) => terminalStaleReasons.has(reason)))) return hasMetric ? "partial" : "error";
     if (candidates.some((row) => [row?.dataStatus, row?.sleepDataStatus, row?.activityDataStatus, row?.sleepAnalysisDataStatus, row?.activityAnalysisDataStatus, row?.healthStatus].includes("STALE")
-      || rowStaleReasons(row).length)) return "updating";
+      || rowStaleReasons(row).length)) return hasMetric ? "partial" : "updating";
     if (hasMetric) return "ready";
     return "empty";
+  }
+
+  function latestSummaryMetric(rows, metric, endDate) {
+    if (!isValidDateKey(endDate)) return null;
+    return (Array.isArray(rows) ? rows : []).reduce((latest, row) => {
+      const date = recordLocalDate(row);
+      const value = finiteNumber(row?.[metric]);
+      if (!date || date > endDate || value === null || (latest && latest.date >= date)) return latest;
+      return { date, value };
+    }, null);
+  }
+
+  function trainingDayCount(rows, endDate) {
+    if (!isValidDateKey(endDate)) return 0;
+    const dates = new Set();
+    for (const row of Array.isArray(rows) ? rows : []) {
+      if (row?.deleted === true || row?.valid === false) continue;
+      const date = recordLocalDate(row);
+      if (!date || date > endDate) continue;
+      if ((finiteNumber(row?.trainingSets) ?? 0) > 0 || (finiteNumber(row?.trainingSessions) ?? 0) > 0) dates.add(date);
+    }
+    return dates.size;
+  }
+
+  function linearTrend(values) {
+    const points = (Array.isArray(values) ? values : []).map((value, index) => ({ index, value: finiteNumber(value) }))
+      .filter((point) => point.value !== null);
+    if (points.length < 2) return null;
+    const count = points.length;
+    const meanX = points.reduce((sum, point) => sum + point.index, 0) / count;
+    const meanY = points.reduce((sum, point) => sum + point.value, 0) / count;
+    const denominator = points.reduce((sum, point) => sum + (point.index - meanX) ** 2, 0);
+    if (denominator === 0) return null;
+    const slope = points.reduce((sum, point) => sum + (point.index - meanX) * (point.value - meanY), 0) / denominator;
+    const startIndex = points[0].index, endIndex = points.at(-1).index;
+    return { startIndex, endIndex, startValue: meanY + slope * (startIndex - meanX), endValue: meanY + slope * (endIndex - meanX) };
   }
 
   function nutritionReadState(records, rows, date, timeZone = "Asia/Taipei") {
@@ -299,6 +335,9 @@
     visibleMeals,
     aggregateNutritionByDate,
     timelineReadState,
+    latestSummaryMetric,
+    trainingDayCount,
+    linearTrend,
     nutritionReadState,
     metricReadState,
     sortMealsByLocalTime,

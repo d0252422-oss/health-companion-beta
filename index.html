@@ -2,9 +2,9 @@
 <html lang="zh-Hant">
  <head><meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="health-companion-build" content="20261003-beta-metric-readback-02">
+  <meta name="health-companion-build" content="20261003-beta-summary-trends-03">
   <title>健康陪跑 Health Companion</title>
-  <script src="scripts/build-version.js?v=20261003-beta-metric-readback-02"></script>
+  <script src="scripts/build-version.js?v=20261003-beta-summary-trends-03"></script>
   <script id="lucide-sdk" async src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <style>
@@ -80,6 +80,7 @@
     .data-state-banner[data-state="partial"]{border-color:color-mix(in srgb,var(--status-warning) 45%,var(--border-color))}
     @keyframes state-spin{to{transform:rotate(360deg)}}
     .partial-state{padding:var(--space-4);border:1px solid color-mix(in srgb,var(--status-warning) 55%,var(--border-color));border-radius:12px;background:color-mix(in srgb,var(--status-warning) 8%,var(--bg-card));color:var(--text-primary);font-size:.8rem;line-height:1.55}.partial-state p{margin:0 0 8px}.partial-state .secondary-button{min-height:40px}
+    .score-domain small{display:block;margin-top:4px;color:var(--text-secondary);font-size:.61rem;line-height:1.35;overflow-wrap:anywhere}
   </style>
   </head>
  <body data-template-id="__page-root">
@@ -138,13 +139,13 @@
           <p id="today-advice">資料同步後，健康陪跑將協助你掌握今天的整體狀態。</p>
          </div>
         </div>
-        <div class="score-domain-grid" aria-label="健康分數組成">
-         <div class="score-domain" data-target="sleep-screen" data-metric=""><span>睡眠</span><b id="score-sleep">—</b></div>
-         <div class="score-domain" data-target="health-score-screen" data-metric="recoveryScore"><span>恢復</span><b id="score-recovery">—</b></div>
-         <div class="score-domain" data-target="health-score-screen" data-metric="fatigueIndex"><span>疲勞指數</span><b id="score-fatigue">—</b></div>
-         <div class="score-domain" data-target="activity-screen" data-metric=""><span>活動</span><b id="score-activity">—</b></div>
-         <div class="score-domain" data-target="training-screen" data-metric=""><span>訓練</span><b id="score-training">—</b></div>
-         <div class="score-domain" data-target="nutrition-screen" data-metric=""><span>營養</span><b id="score-nutrition">—</b></div>
+        <div class="score-domain-grid" aria-label="健康分數組成與已保存指標">
+         <div class="score-domain" data-target="sleep-screen" data-metric=""><span>睡眠分數</span><b id="score-sleep">—</b><small id="summary-sleep">近期睡眠：—</small></div>
+         <div class="score-domain" data-target="health-score-screen" data-metric="recoveryScore"><span>恢復分數</span><b id="score-recovery">—</b><small>尚未計分時保留空白</small></div>
+         <div class="score-domain" data-target="health-score-screen" data-metric="fatigueIndex"><span>疲勞指數</span><b id="score-fatigue">—</b><small>尚未計分時保留空白</small></div>
+         <div class="score-domain" data-target="activity-screen" data-metric=""><span>活動分數</span><b id="score-activity">—</b><small id="summary-steps">近期步數：—</small></div>
+         <div class="score-domain" data-target="training-screen" data-metric=""><span>訓練分數</span><b id="score-training">—</b><small id="summary-training">近期訓練：—</small></div>
+         <div class="score-domain" data-target="nutrition-screen" data-metric=""><span>營養分數</span><b id="score-nutrition">—</b><small id="summary-nutrition">近期攝取：—</small></div>
         </div>
         <details class="score-details"><summary>分數依據與健康資料覆蓋率</summary><p id="score-explanation">尚無可解釋資料。</p></details>
        </div>
@@ -723,11 +724,11 @@
    </div>
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="scripts/manual-sql-config.js?v=20261003-beta-metric-readback-02"></script>
-  <script src="scripts/core-ux-contract.js?v=20261003-beta-metric-readback-02"></script>
-  <script src="scripts/local-engine-web.js?v=20261003-beta-metric-readback-02"></script>
-  <script src="scripts/web-view-state.js?v=20261003-beta-metric-readback-02"></script>
-  <script src="scripts/manual-observation-web.js?v=20261003-beta-metric-readback-02"></script>
+  <script src="scripts/manual-sql-config.js?v=20261003-beta-summary-trends-03"></script>
+  <script src="scripts/core-ux-contract.js?v=20261003-beta-summary-trends-03"></script>
+  <script src="scripts/local-engine-web.js?v=20261003-beta-summary-trends-03"></script>
+  <script src="scripts/web-view-state.js?v=20261003-beta-summary-trends-03"></script>
+  <script src="scripts/manual-observation-web.js?v=20261003-beta-summary-trends-03"></script>
   <script>
     const APP_STARTED_AT=performance.now();
     const PERF_DEBUG=new URLSearchParams(location.search).get("debugPerf")==="1";
@@ -997,8 +998,13 @@ async function sessionPost(action,payload={}){
       const box=typeof target==="string"?document.getElementById(target):target;if(!box)return;box.classList.toggle("trend-chart-box",!options.compact);if(options.loadingState){box.innerHTML='<div class="skeleton"></div>';return;}const metric=options.metric||options.key,key=options.key||metric,cfg=metricConfig(metric,options),data=normalizeTrendData(rows,key,options.preserveGaps===true),validData=data.filter(item=>item.value!==null);
       if(!validData.length){box.innerHTML=trendEmpty(options.emptyState);return;}
       const viewport=trendViewportWidth(box),width=data.length<=7?viewport:Math.max(viewport,data.length*66+76),height=options.compact?190:260,pad=options.compact?{top:18,right:22,bottom:22,left:22}:{top:43,right:38,bottom:34,left:38},plotW=width-pad.left-pad.right,plotH=height-pad.top-pad.bottom,type=options.type||"line",values=validData.map(item=>item.value),targetValue=num(options.targetValue),scaleValues=targetValue===null?values:[...values,targetValue],configuredMin=num(options.minValue),configuredMax=num(options.maxValue),rawMin=configuredMin??(type==="bar"?0:Math.min(...scaleValues)),rawMax=configuredMax??Math.max(...scaleValues),span=rawMax-rawMin||Math.max(Math.abs(rawMax)*.08,1),min=configuredMin??(type==="bar"?0:rawMin-span*.14),max=configuredMax??(rawMax+span*.18),xAt=index=>data.length===1?pad.left+plotW/2:pad.left+index*plotW/(data.length-1),yAt=value=>pad.top+(max-value)/(max-min||1)*plotH,latestIndex=data.reduce((result,item,index)=>item.value!==null?index:result,-1),showLabels=options.showDataLabels!==false;
-      const points=data.map((item,index)=>({...item,index,x:xAt(index),y:item.value===null?null:yAt(item.value)}));let marks="",segments=[],segment=[];
-      if(type==="line"){points.forEach(point=>{if(point.y===null){if(segment.length)segments.push(segment);segment=[];}else segment.push(point);});if(segment.length)segments.push(segment);marks+=segments.filter(part=>part.length>1).map(part=>`<polyline class="trend-line" points="${part.map(point=>`${point.x},${point.y}`).join(" ")}" stroke="${cfg.color}" stroke-width="3"/>`).join("");}
+      const points=data.map((item,index)=>({...item,index,x:xAt(index),y:item.value===null?null:yAt(item.value)}));let marks="";
+      if(type==="line"){
+        const visiblePoints=points.filter(point=>point.y!==null);
+        if(visiblePoints.length>1)marks+=`<polyline class="trend-line" points="${visiblePoints.map(point=>`${point.x},${point.y}`).join(" ")}" stroke="${cfg.color}" stroke-width="3"/>`;
+        const trend=HealthCoreUX.linearTrend(data.map(item=>item.value));
+        if(trend)marks+=`<line class="trend-trendline" x1="${xAt(trend.startIndex)}" y1="${yAt(trend.startValue)}" x2="${xAt(trend.endIndex)}" y2="${yAt(trend.endValue)}" stroke="var(--accent-secondary)" stroke-width="1.5" stroke-dasharray="5 4" opacity=".75" aria-label="依有效資料計算的線性趨勢"/>`;
+      }
       if(targetValue!==null){const targetY=yAt(targetValue);marks+=`<line x1="${pad.left}" y1="${targetY}" x2="${width-pad.right}" y2="${targetY}" stroke="var(--status-success)" stroke-width="1.5" stroke-dasharray="5 5" opacity=".7"/>`;}
       points.forEach(point=>{
         const isLatest=options.highlightLatest!==false&&point.index===latestIndex;
@@ -1058,8 +1064,13 @@ async function sessionPost(action,payload={}){
     function updateKpi(id,value,detail,chartId,values){setValue(id,value);setValue(detail.id,detail.text);document.getElementById(chartId).innerHTML=sparkline(values);}
     function renderDashboard(){
       const d=appState.dashboard||{},today=d.today||{},timeline=appState.healthTimeline;
-      const score=num(today.healthScore);setValue("health-score",score===null?"—":score);document.getElementById("health-ring").style.setProperty("--score",score===null?0:Math.min(100,score));setValue("score-status",today.healthStatus||"等待同步");setValue("today-state",today.healthStatus||"今天的健康狀態");setValue("today-advice",today.recommendation||"持續同步身體、睡眠與活動資料，以建立更完整的健康狀態。");setValue("coach-advice",today.recommendation||"AI 健康分析尚未啟用");
+      const summaryDate=getLocalDateString(),summaryMetric=metric=>HealthCoreUX.latestSummaryMetric(timeline,metric,summaryDate),summarySleep=summaryMetric("sleepHours"),summarySteps=summaryMetric("steps"),summaryTraining=summaryMetric("trainingSets"),summaryNutrition=summaryMetric("caloriesIntake"),hasSavedMetrics=Boolean(summarySleep||summarySteps||summaryTraining||summaryNutrition);
+      const score=num(today.healthScore);setValue("health-score",score===null?"—":score);document.getElementById("health-ring").style.setProperty("--score",score===null?0:Math.min(100,score));setValue("score-status",score===null&&hasSavedMetrics?"今日分析未完成":today.healthStatus||"等待同步");setValue("today-state",score===null&&hasSavedMetrics?"今天的健康分數尚未產生":today.healthStatus||"今天的健康狀態");setValue("today-advice",today.recommendation||(hasSavedMetrics?"近期健康資料已保存並列於下方；今天的分數仍待分析，不能用舊分數代替。":"持續同步身體、睡眠與活動資料，以建立更完整的健康狀態。"));setValue("coach-advice",today.recommendation||"AI 健康分析尚未啟用");
       [["score-sleep",today.sleepSystemScore],["score-recovery",today.recoveryScore],["score-fatigue",today.fatigueIndex],["score-activity",today.activityScore],["score-training",today.trainingScore],["score-nutrition",today.nutritionScore]].forEach(([id,value])=>setValue(id,num(value)===null?"—":Math.round(Number(value))));
+      setValue("summary-sleep",summarySleep?`近期睡眠 ${recordDateLabel(summarySleep.date)} · ${metricDisplay("sleepHours",summarySleep.value,{full:true})}`:"近期睡眠：—");
+      setValue("summary-steps",summarySteps?`近期步數 ${recordDateLabel(summarySteps.date)} · ${metricDisplay("steps",summarySteps.value,{full:true})}`:"近期步數：—");
+      setValue("summary-training",summaryTraining?`近期訓練 ${recordDateLabel(summaryTraining.date)} · ${metricDisplay("trainingSets",summaryTraining.value,{full:true})}`:"近期訓練：—");
+      setValue("summary-nutrition",summaryNutrition?`近期攝取 ${recordDateLabel(summaryNutrition.date)} · ${metricDisplay("caloriesIntake",summaryNutrition.value,{full:true})}`:"近期攝取：—");
       const domainMetadata=healthDomainMetadata(today),completeness=today.scoreMetadata?.completeness??today.dataCompleteness,confidence=normalizeHealthConfidence(today.scoreMetadata?.confidence??today.scoreConfidence,completeness,domainMetadata.available.length),labels=domains=>domains.map(domain=>HEALTH_DOMAIN_LABELS[domain]).join("、"),coverageLabel=domainMetadata.missing.length?`缺少資料：${labels(domainMetadata.missing)}`:(domainMetadata.partial.length?"所有領域皆可計分":"所有領域資料完整"),details=[`健康資料覆蓋率：${formatHealthCompleteness(completeness)}`,`信心等級：${confidence}`,coverageLabel,domainMetadata.partial.length?`部分資料：${labels(domainMetadata.partial)}`:"",today.algorithmVersion?`演算法：${today.algorithmVersion}`:""].filter(Boolean).join("\n");setValue("score-explanation",details);
       const weights=timeline.map(row=>row.weight),fats=timeline.map(row=>row.bodyFatPercentage),sleepScores=timeline.map(row=>row.sleepScore),sleepHours=timeline.map(row=>row.sleepHours),steps=timeline.map(row=>row.steps),heartRates=timeline.map(row=>row.heartRate),scoreValues=timeline.map(row=>row.healthScore),sets=timeline.map(row=>row.trainingSets),volumes=timeline.map(row=>row.trainingVolume),burned=timeline.map(row=>row.caloriesBurned);
       updateKpi("kpi-score",score===null?"—":score,{id:"kpi-score-detail",text:today.healthStatus||"等待同步"},"kpi-score-chart",scoreValues);
@@ -1067,7 +1078,7 @@ async function sessionPost(action,payload={}){
       updateKpi("kpi-weight-value",metricDisplay("weight",weight,{full:true}),{id:"kpi-weight-detail",text:weight===null?"尚無資料":recordDateLabel(weightMetric.date)},"kpi-weight-chart",weights);
       updateKpi("kpi-fat-value",metricDisplay("bodyFatPercentage",fat,{full:true}),{id:"kpi-fat-detail",text:fatDelta===null?"尚無比較資料":`${fatDelta>0?"+":""}${fatDelta.toFixed(2)}%`},"kpi-fat-chart",fats);
       updateKpi("kpi-sleep-value",metricDisplay("sleepHours",sleepMetric.value,{full:true}),{id:"kpi-sleep-detail",text:sleepScoreMetric.value===null?"尚無睡眠分數":`睡眠分數 ${sleepScoreMetric.value}`},"kpi-sleep-chart",sleepHours);
-      const hasWorkoutSetData=sets.some(value=>num(value)!==null),workoutTotal=sets.reduce((total,value)=>total+(num(value)||0),0),hasWorkoutSessionData=timeline.some(row=>num(row.trainingSessions)!==null),workoutSessions=timeline.reduce((total,row)=>total+(num(row.trainingSessions)||0),0);updateKpi("kpi-training-value",hasWorkoutSetData?`${workoutTotal} 組`:"—",{id:"kpi-training-detail",text:hasWorkoutSessionData?`${workoutSessions} 場訓練`:"尚無訓練資料"},"kpi-training-chart",sets);
+      const hasWorkoutSetData=sets.some(value=>num(value)!==null),workoutTotal=sets.reduce((total,value)=>total+(num(value)||0),0),hasWorkoutSessionData=timeline.some(row=>num(row.trainingSessions)!==null),trainingDays=HealthCoreUX.trainingDayCount(timeline,summaryDate);updateKpi("kpi-training-value",hasWorkoutSetData?`${workoutTotal} 組`:"—",{id:"kpi-training-detail",text:hasWorkoutSetData||hasWorkoutSessionData?`${trainingDays} 個訓練日`:"尚無訓練資料"},"kpi-training-chart",sets);
       updateKpi("kpi-steps-value",metricDisplay("steps",stepsMetric.value,{full:true}),{id:"kpi-steps-detail",text:stepsMetric.value===null?"尚無資料":recordDateLabel(stepsMetric.date)},"kpi-steps-chart",steps);
       updateKpi("kpi-heart-rate-value",metricDisplay("heartRate",heartRateMetric.value,{full:true}),{id:"kpi-heart-rate-detail",text:heartRateMetric.value===null?"尚無每日靜息心率摘要":recordDateLabel(heartRateMetric.date)},"kpi-heart-rate-chart",heartRates);
       updateKpi("kpi-energy-value",metricDisplay("caloriesBurned",energyMetric.value,{full:true}),{id:"kpi-energy-detail",text:energyMetric.value===null?"尚無資料":recordDateLabel(energyMetric.date)},"kpi-energy-chart",burned);
