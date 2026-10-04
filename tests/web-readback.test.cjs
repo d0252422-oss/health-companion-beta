@@ -52,6 +52,22 @@ test('performance HTML has neutral initial titles; the separate weekly report st
   assert.match(html, /syncDateRangeUI\(\);updatePageHeader\(\)/);
 });
 
+test('LINE external login stays on the Beta route and preserves the existing link handshake', () => {
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const externalUrl = html.match(/EXTERNAL_APP_URL:"([^"]+)"/)[1];
+  const source = html.match(/    function externalGoogleUrl\(\)[^\n]+/)[0];
+  for (const linkCode of ['', 'synthetic+link/code=']) {
+    const context = vm.createContext({ URL, CONFIG: { EXTERNAL_APP_URL: externalUrl }, pendingLineLinkCode: linkCode });
+    vm.runInContext(source, context);
+    const url = new URL(vm.runInContext('externalGoogleUrl()', context));
+    assert.equal(url.origin, 'https://d0252422-oss.github.io');
+    assert.equal(url.pathname, '/health-companion-beta/');
+    assert.equal(url.searchParams.get('source'), 'line');
+    assert.equal(url.searchParams.get('auth'), 'google-external-v7');
+    assert.equal(url.searchParams.get('lineLinkCode'), linkCode || null);
+  }
+});
+
 test('one failed analysis day does not hide a later day with steps and score', () => {
   const rows = [
     { date: '2026-09-27', healthStaleReason: 'RECOMPUTE_FAILED' },
