@@ -7,6 +7,51 @@ const vm = require('node:vm');
 const root = path.resolve(__dirname, '..');
 const ux = require('../scripts/core-ux-contract.js');
 
+function performanceRangeUI() {
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  const nodes = { 'performance-title': { textContent: '健康績效' }, 'perf-sets-label': { textContent: '訓練組數' } };
+  const customOption = { textContent: '自訂日期' };
+  const select = { value: '', querySelector: () => customOption };
+  const context = vm.createContext({
+    globalDateRange: { preset: '30d' }, DATA_SECTIONS: ['body', 'training'], sectionWindows: {},
+    document: { getElementById: id => id === 'global-range' ? select : nodes[id] },
+    resolveDateRange: (_, range) => ({ startDate: range.startDate || '2026-09-05', endDate: range.endDate || '2026-10-04' }),
+    formatDateRange: range => `${range.startDate} – ${range.endDate}`,
+    setValue: (id, value) => { nodes[id].textContent = value; },
+  });
+  const source = html.match(/    function syncDateRangeUI\(\)[\s\S]*?(?=\n    function restoreGlobalDateRangeFromLocation)/)[0];
+  vm.runInContext(source, context);
+  return { nodes, select, context, sync(range) { context.globalDateRange = range; vm.runInContext('syncDateRangeUI()', context); } };
+}
+
+for (const [preset, label] of [['7d', '7 日內'], ['30d', '30 日內'], ['90d', '90 日內'], ['year', '今年'], ['custom', '自訂期間']]) {
+  test(`performance titles follow the selected ${preset} range without claiming this week`, () => {
+    const ui = performanceRangeUI();
+    ui.sync({ preset, startDate: '2026-09-05', endDate: '2026-10-04' });
+    assert.equal(ui.nodes['performance-title'].textContent, `${label}健康績效`);
+    assert.equal(ui.nodes['perf-sets-label'].textContent, `${label}訓練組數`);
+    assert.equal(ui.select.value, preset);
+    assert.equal(ui.context.sectionWindows.training.start, '2026-09-05');
+  });
+}
+
+test('switching the range updates both labels immediately, without waiting for an API', () => {
+  const ui = performanceRangeUI();
+  for (const [preset, label] of [['30d', '30 日內'], ['7d', '7 日內'], ['custom', '自訂期間'], ['30d', '30 日內']]) {
+    ui.sync({ preset });
+    assert.equal(ui.nodes['performance-title'].textContent, `${label}健康績效`);
+    assert.equal(ui.nodes['perf-sets-label'].textContent, `${label}訓練組數`);
+  }
+});
+
+test('performance HTML has neutral initial titles; the separate weekly report stays weekly', () => {
+  const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+  assert.match(html, /id="performance-title"[^>]*>健康績效</);
+  assert.match(html, /id="perf-sets-label"[^>]*>訓練組數</);
+  assert.match(html, /id="report-period"[^>]*>本週健康摘要</);
+  assert.match(html, /syncDateRangeUI\(\);updatePageHeader\(\)/);
+});
+
 test('one failed analysis day does not hide a later day with steps and score', () => {
   const rows = [
     { date: '2026-09-27', healthStaleReason: 'RECOMPUTE_FAILED' },

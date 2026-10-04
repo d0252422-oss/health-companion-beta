@@ -2,9 +2,9 @@
 <html lang="zh-Hant">
  <head><meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="health-companion-build" content="20261004-beta-training-days-recovery-06">
+  <meta name="health-companion-build" content="20261004-beta-period-labels-07">
   <title>健康陪跑 Health Companion</title>
-  <script src="scripts/build-version.js?v=20261004-beta-training-days-recovery-06"></script>
+  <script src="scripts/build-version.js?v=20261004-beta-period-labels-07"></script>
   <script id="lucide-sdk" async src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <style>
@@ -271,13 +271,13 @@
       <article class="card chart-card"><div class="donut-layout"><div id="composition-donut" class="donut"><div class="donut-center"><b id="composition-weight">—</b><span data-template-id="composition-center-label" class="canva-text">目前體重</span></div></div><div id="composition-legend" class="legend"><div class="chart-empty">尚無資料</div></div></div></article>
       <div class="section-heading">
        <div>
-        <h2 data-template-id="performance-title" class="canva-text">本週健康績效</h2>
+        <h2 id="performance-title" data-template-id="performance-title" class="canva-text">健康績效</h2>
         <p data-template-id="performance-subtitle" class="canva-text">像檢視投資績效一樣，快速檢視健康投入</p>
        </div>
       </div>
       <section class="performance-grid">
        <article class="card performance-card">
-        <span data-template-id="perf-sets" class="canva-text">本週訓練組數</span><b id="perf-sets">—</b><span data-template-id="perf-sets-note" class="canva-text">期間累積</span>
+        <span id="perf-sets-label" data-template-id="perf-sets" class="canva-text">訓練組數</span><b id="perf-sets">—</b><span data-template-id="perf-sets-note" class="canva-text">期間累積</span>
         <div id="perf-sets-chart" class="mini-chart"></div>
        </article>
        <article class="card performance-card">
@@ -724,11 +724,11 @@
    </div>
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="scripts/manual-sql-config.js?v=20261004-beta-training-days-recovery-06"></script>
-  <script src="scripts/core-ux-contract.js?v=20261004-beta-training-days-recovery-06"></script>
-  <script src="scripts/local-engine-web.js?v=20261004-beta-training-days-recovery-06"></script>
-  <script src="scripts/web-view-state.js?v=20261004-beta-training-days-recovery-06"></script>
-  <script src="scripts/manual-observation-web.js?v=20261004-beta-training-days-recovery-06"></script>
+  <script src="scripts/manual-sql-config.js?v=20261004-beta-period-labels-07"></script>
+  <script src="scripts/core-ux-contract.js?v=20261004-beta-period-labels-07"></script>
+  <script src="scripts/local-engine-web.js?v=20261004-beta-period-labels-07"></script>
+  <script src="scripts/web-view-state.js?v=20261004-beta-period-labels-07"></script>
+  <script src="scripts/manual-observation-web.js?v=20261004-beta-period-labels-07"></script>
   <script>
     const APP_STARTED_AT=performance.now();
     const PERF_DEBUG=new URLSearchParams(location.search).get("debugPerf")==="1";
@@ -807,7 +807,7 @@
     function rangeDates(value=globalDateRange.preset){const preset=typeof value==="number"?`${value}d`:value,range=resolveDateRange(preset,preset==="custom"?globalDateRange:{});return {start:range.startDate,end:range.endDate};}
     function formatDateRange(range=resolveDateRange(globalDateRange.preset,globalDateRange)){return `${range.startDate.replaceAll("-","/")} – ${range.endDate.replaceAll("-","/")}`;}
     function persistGlobalDateRange(){localStorage.setItem(DATE_RANGE_STORAGE_KEY,JSON.stringify(globalDateRange));const url=new URL(location.href);url.searchParams.set("range",globalDateRange.preset);if(globalDateRange.preset==="custom"){url.searchParams.set("start",globalDateRange.startDate);url.searchParams.set("end",globalDateRange.endDate);}else{url.searchParams.delete("start");url.searchParams.delete("end");}history.replaceState(history.state&&typeof history.state==="object"?{...history.state}: {},"",url);}
-    function syncDateRangeUI(){const select=document.getElementById("global-range"),range=resolveDateRange(globalDateRange.preset,globalDateRange);if(select){select.value=globalDateRange.preset;const customOption=select.querySelector('option[value="custom"]');if(customOption)customOption.textContent=globalDateRange.preset==="custom"?formatDateRange(range):"自訂日期";}DATA_SECTIONS.forEach(section=>sectionWindows[section]={start:range.startDate,end:range.endDate});}
+    function syncDateRangeUI(){const select=document.getElementById("global-range"),range=resolveDateRange(globalDateRange.preset,globalDateRange);if(select){select.value=globalDateRange.preset;const customOption=select.querySelector('option[value="custom"]');if(customOption)customOption.textContent=globalDateRange.preset==="custom"?formatDateRange(range):"自訂日期";}const periodLabel={"7d":"7 日內","30d":"30 日內","90d":"90 日內",year:"今年",custom:"自訂期間"}[globalDateRange.preset]||"所選期間";setValue("performance-title",`${periodLabel}健康績效`);setValue("perf-sets-label",`${periodLabel}訓練組數`);DATA_SECTIONS.forEach(section=>sectionWindows[section]={start:range.startDate,end:range.endDate});}
     function restoreGlobalDateRangeFromLocation(){const next=loadGlobalDateRange(),changed=next.preset!==globalDateRange.preset||next.startDate!==globalDateRange.startDate||next.endDate!==globalDateRange.endDate;if(!changed)return false;globalDateRange=next;try{localStorage.setItem(DATE_RANGE_STORAGE_KEY,JSON.stringify(globalDateRange));}catch{}syncDateRangeUI();setConnectionState("connecting");setDashboardDataState(appState.healthTimeline.length?"updating":"loading");return true;}
     function refreshRestoredGlobalDateRange(){loadRange(globalDateRange,{force:true}).then(failures=>{if(failures.length){setConnectionState("error");showDashboardError(`未完成項目：${failures.map(item=>item.name).join("、")}。`,true);}else setConnectionState("connected");}).catch(error=>{setConnectionState("error");showDashboardError(readableError(error),true);});}
     function isConfigured(){return CONFIG.API_BASE_URL&&CONFIG.API_BASE_URL!=="YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL";}
