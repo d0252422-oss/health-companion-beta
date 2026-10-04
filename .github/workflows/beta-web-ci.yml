@@ -20,5 +20,11 @@ jobs:
         run: node --test tests/training-day-card.test.cjs tests/build-recovery.test.cjs tests/web-readback.test.cjs tests/shared-chart.test.cjs tests/release-web.test.cjs
       - name: Beta build and scoped secret scan
         run: node scripts/verify-web.cjs
+      - name: Release contract regression when present
+        run: |
+          if test -f tests/release-contract.test.cjs; then
+            node --test tests/release-contract.test.cjs
+            node scripts/release-contract.cjs validate
+          fi
       - name: Whitespace check
         run: git diff --check
