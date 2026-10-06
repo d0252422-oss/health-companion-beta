@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '24'
       - name: Targeted Web regression
-        run: node --test tests/training-day-card.test.cjs tests/build-recovery.test.cjs tests/web-readback.test.cjs tests/shared-chart.test.cjs tests/release-web.test.cjs
+        run: node --test tests/training-day-card.test.cjs tests/build-recovery.test.cjs tests/web-readback.test.cjs tests/shared-chart.test.cjs tests/release-web.test.cjs tests/performance-requests.test.cjs
       - name: Beta build and scoped secret scan
         run: node scripts/verify-web.cjs
       - name: Whitespace check
