@@ -84,6 +84,13 @@
     return `${cursor.getUTCFullYear()}-${String(cursor.getUTCMonth() + 1).padStart(2, "0")}-${String(cursor.getUTCDate()).padStart(2, "0")}`;
   }
 
+  function getCalendarDateRange(days, timeZone = "Asia/Taipei", now = new Date()) {
+    if (!Number.isSafeInteger(days) || days < 1 || days > 366) throw Error("INVALID_CALENDAR_WINDOW");
+    const endDate = localDateKey(now, timeZone);
+    if (!endDate) throw Error("INVALID_CALENDAR_WINDOW");
+    return { startDate: shiftLocalDate(endDate, -(days - 1)), endDate, days };
+  }
+
   function fillLocalDateGaps(rows, window, timeZone = "Asia/Taipei") {
     const source = Array.isArray(rows) ? rows : [];
     if (!window?.start || !window?.end) return source;
@@ -139,6 +146,18 @@
     "trainingVolume", "trainingSessions", "healthScore", "recoveryScore", "fatigueScore",
     "activityScore", "trainingScore", "nutritionScore", "bodyCompositionScore",
   ]);
+
+  function dailyMetricBuckets(rows, window, timeZone = "Asia/Taipei") {
+    const empty = Object.fromEntries(timelineMetricKeys.map(key => [key, null]));
+    return fillLocalDateGaps(rows, window, timeZone).map(row => ({ ...empty, ...row }));
+  }
+
+  function latestRangeMetric(rows, metric, window) {
+    return latestSummaryMetric((Array.isArray(rows) ? rows : []).filter(row => {
+      const date = recordLocalDate(row);
+      return date && date >= window.start && date <= window.end;
+    }), metric, window.end);
+  }
 
   const terminalStaleReasons = Object.freeze(new Set(["RECOMPUTE_FAILED"]));
 
@@ -329,7 +348,10 @@
     recordLocalDate,
     localDateRange,
     shiftLocalDate,
+    getCalendarDateRange,
     fillLocalDateGaps,
+    dailyMetricBuckets,
+    latestRangeMetric,
     calculateKnownNutrientTotals,
     formatNutritionAmount,
     visibleMeals,
