@@ -30,7 +30,7 @@ function render(metric, values, selectedIndex = values.length - 1) {
   return vm.runInContext('renderSharedPanel(metric, rows, selectedIndex)', context);
 }
 
-for (const metric of ['sleepHours', 'weight', 'bodyFatPercentage', 'steps', 'caloriesBurned', 'spo2']) {
+for (const metric of ['sleepHours', 'weight', 'fatMass', 'trainingSets', 'bodyFatPercentage', 'steps', 'caloriesBurned', 'spo2']) {
   test(`${metric}: shared chart bridges real points without filling null dates`, () => {
     const result = render(metric, [10.3, null, 6.5, null, 6.6, 5.6, null]);
     const lines = [...result.matchAll(/<polyline class="shared-line" points="([^"]+)"/g)];
@@ -40,8 +40,9 @@ for (const metric of ['sleepHours', 'weight', 'bodyFatPercentage', 'steps', 'cal
     assert.deepEqual(points.map(point => point[0]), [18, 208, 398, 493]);
     assert.equal((result.match(/<circle /g) || []).length, 4);
     assert.match(result, /class="shared-trendline"/);
-    assert.match(result, /<b>—<\/b>/);
-    assert.match(result, /所選日期尚無紀錄/);
+    assert.match(result, /<b>5.6<\/b>/);
+    assert.match(result, /2026-10-06 · 期間最新紀錄/);
+    assert.doesNotMatch(result, /所選日期尚無紀錄/);
     assert.match(result, new RegExp(`aria-valuetext="2026-10-07，${metric} —"`));
     assert.doesNotMatch(result, /NaN|Infinity/);
   });
@@ -75,7 +76,7 @@ test('empty and singleton shared charts do not invent a line or trend', () => {
     const result = render('sleepHours', values);
     assert.doesNotMatch(result, /class="shared-line"|class="shared-trendline"/);
     assert.doesNotMatch(result, /NaN|Infinity/);
-    assert.match(result, /<b>—<\/b>/);
+    assert.match(result, values.includes(5.6) ? /<b>5.6<\/b>/ : /<b>—<\/b>/);
   }
 });
 
