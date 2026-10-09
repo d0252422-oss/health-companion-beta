@@ -5,7 +5,7 @@ const path = require('node:path');
 const { verify, scan } = require('../scripts/verify-web.cjs');
 test('static build verifies Beta markers, endpoint and publishable assets', () => {
   const result = verify(path.join(__dirname, '..'));
-  assert.equal(result.assets.length, 9);
+  assert.equal(result.assets.length, 10);
   assert.equal(result.secret_scan, 'PASS_SCOPED_PATTERNS');
 });
 test('Production repository rejected before reading files', () => {

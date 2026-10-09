@@ -2,9 +2,9 @@
 <html lang="zh-Hant">
  <head><meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="health-companion-build" content="20261008-beta-calendar-window-10">
+  <meta name="health-companion-build" content="20261009-beta-training-goals-11">
   <title>健康陪跑 Health Companion</title>
-  <script src="scripts/build-version.js?v=20261008-beta-calendar-window-10"></script>
+  <script src="scripts/build-version.js?v=20261009-beta-training-goals-11"></script>
   <script id="lucide-sdk" async src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <style>
@@ -81,7 +81,7 @@
     @keyframes state-spin{to{transform:rotate(360deg)}}
     .partial-state{padding:var(--space-4);border:1px solid color-mix(in srgb,var(--status-warning) 55%,var(--border-color));border-radius:12px;background:color-mix(in srgb,var(--status-warning) 8%,var(--bg-card));color:var(--text-primary);font-size:.8rem;line-height:1.55}.partial-state p{margin:0 0 8px}.partial-state .secondary-button{min-height:40px}
     .score-domain small{display:block;margin-top:4px;color:var(--text-secondary);font-size:.61rem;line-height:1.35;overflow-wrap:anywhere}
-  </style>
+  .pr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}#training-personal-panel label{display:block;margin:10px 0}#training-personal-panel details{margin:12px 0}#training-personal-panel button{margin:4px}#training-personal-evidence{overflow-wrap:anywhere}</style>
   </head>
  <body data-template-id="__page-root">
   <div id="authenticated-app" class="app-wrapper" aria-hidden="true" inert>
@@ -353,6 +353,22 @@
      </section>
      <section id="training-screen" class="screen">
       <div id="training-overview">
+       <article class="card card-pad" id="training-personal-entry">
+        <div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="secondary-button" id="open-personal-records">個人最佳</button><button type="button" class="secondary-button" id="open-training-goals">我的目標</button></div>
+        <section id="training-personal-panel" hidden><h2 id="training-personal-title">個人最佳</h2>
+         <div id="training-pr-controls"><label>動作<select id="training-personal-exercise" class="form-input"></select></label><label>期間<select id="training-personal-range" class="form-input"><option value="all">歷史最佳</option><option value="7">7 天</option><option value="30">30 天</option><option value="90">90 天</option></select></label></div>
+         <button id="training-personal-refresh" type="button" class="secondary-button">重新讀取</button>
+         <div id="training-personal-content" aria-live="polite"></div>
+         <form id="training-goal-form" hidden><h3>訓練目標設定</h3>
+          <label>動作<select id="goal-exercise" class="form-input" required></select></label>
+          <label>計重方式<select id="goal-basis" class="form-input" required></select></label>
+          <div class="pr-cards"><label>目標重量<input id="goal-load" class="form-input" type="number" min="0.000001" step="any" required></label><label>單位<select id="goal-unit" class="form-input"><option value="kg">kg</option><option value="lb">lb</option></select></label><label>目標完成次數<input id="goal-reps" class="form-input" type="number" min="1" max="10000" step="1" required></label></div>
+          <label>開始日期<input id="goal-start" class="form-input" type="date" required></label><label>截止日期（可選）<input id="goal-end" class="form-input" type="date"></label>
+          <details><summary>器材／變式／側別（已有識別時填寫）</summary><p>必須與原始組的識別相同才會比較；留白不代表包含所有器材。</p><label>變式識別<input id="goal-variant" class="form-input" maxlength="128"></label><label>器材識別<input id="goal-equipment" class="form-input" maxlength="128"></label><label>側別識別<input id="goal-side" class="form-input" maxlength="128"></label></details>
+          <button id="goal-save" class="primary-button" type="submit">儲存目標</button><button id="goal-cancel" class="secondary-button" type="button">取消</button><p id="goal-form-status" role="status"></p>
+         </form><div id="training-personal-evidence" aria-live="polite"></div>
+        </section>
+       </article>
        <div id="training-draft-notice" class="card card-pad" hidden><p>你有未完成的訓練</p><button id="resume-workout" type="button" class="primary-button">繼續訓練</button></div>
        <div class="section-heading">
         <div><h2>訓練摘要</h2><p>統計會依照頁首所選時間範圍更新</p></div><button id="start-workout" class="primary-button" type="button"><i data-lucide="play" style="width:15px"></i><span data-template-id="start-workout-label" class="canva-text">開始訓練</span></button>
@@ -724,11 +740,12 @@
    </div>
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="scripts/manual-sql-config.js?v=20261008-beta-calendar-window-10"></script>
-  <script src="scripts/core-ux-contract.js?v=20261008-beta-calendar-window-10"></script>
-  <script src="scripts/local-engine-web.js?v=20261008-beta-calendar-window-10"></script>
-  <script src="scripts/web-view-state.js?v=20261008-beta-calendar-window-10"></script>
-  <script src="scripts/manual-observation-web.js?v=20261008-beta-calendar-window-10"></script>
+  <script src="scripts/manual-sql-config.js?v=20261009-beta-training-goals-11"></script>
+  <script src="scripts/core-ux-contract.js?v=20261009-beta-training-goals-11"></script>
+  <script src="scripts/local-engine-web.js?v=20261009-beta-training-goals-11"></script>
+  <script src="scripts/training-personal-web.js?v=20261009-beta-training-goals-11"></script>
+  <script src="scripts/web-view-state.js?v=20261009-beta-training-goals-11"></script>
+  <script src="scripts/manual-observation-web.js?v=20261009-beta-training-goals-11"></script>
   <script>
     const APP_STARTED_AT=performance.now();
     const PERF_DEBUG=new URLSearchParams(location.search).get("debugPerf")==="1";
@@ -1292,7 +1309,7 @@ async function sessionPost(action,payload={}){
     function setFormLookupState(formId,state,{editableIds=[],editableSelector="",saveId="",deleteId="",canDelete=false}={}){if(!["loading","ready","error","saving"].includes(state))throw Error("INVALID_FORM_LOOKUP_STATE");const form=document.getElementById(formId),lockInputs=state==="saving";form.dataset.lookupState=state;form.setAttribute("aria-busy",String(state==="loading"||state==="saving"));for(const id of editableIds){const control=document.getElementById(id);if(control)control.disabled=lockInputs;}if(editableSelector)form.querySelectorAll(editableSelector).forEach(control=>control.disabled=lockInputs);const save=saveId&&document.getElementById(saveId),remove=deleteId&&document.getElementById(deleteId);if(save)save.disabled=state!=="ready";if(remove)remove.disabled=state!=="ready"||!canDelete;return state;}
     const WORKOUT_SAVE_STATES=new Set(["IDLE","SAVING","COMMITTED","POST_PROCESSING","COMPLETE","FAILED_RETRYABLE","FAILED_FINAL"]);
     function setWorkoutSaveState(button,state,{session=workoutSession}={}){if(!WORKOUT_SAVE_STATES.has(state))throw new Error("INVALID_WORKOUT_SAVE_STATE");if(!button.dataset.idleLabel)button.dataset.idleLabel=button.textContent;button.dataset.saveState=state;if(session&&workoutSession===session){session.saveState=state;persistWorkoutDraft();}button.disabled=["SAVING","COMMITTED"].includes(state);button.setAttribute("aria-busy",String(["SAVING","COMMITTED"].includes(state)));button.textContent=state==="SAVING"?"儲存中…":state==="COMMITTED"||state==="POST_PROCESSING"?"已儲存・分析更新中":state==="FAILED_RETRYABLE"?"重試完成訓練":button.dataset.idleLabel;}
-    function createExerciseBlock(exercise){document.getElementById("workout-empty-state")?.remove();const block=document.createElement("div");block.className="card card-pad";block.style.marginTop="12px";block.dataset.exerciseId=exercise.exerciseId;block.innerHTML=`<b>${escapeHtml(exercise.exerciseName)} · ${escapeHtml(exerciseBodyPartName(exercise))}</b><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input class="form-input exercise-weight" aria-label="重量 kg" type="number" min="0" max="1000" step="any" placeholder="重量 kg"><input class="form-input exercise-reps" aria-label="次數" type="number" min="1" max="10000" step="1" placeholder="次數"></div><button class="primary-button complete-set" style="margin-top:9px;width:100%" type="button">完成一組</button><div class="set-log"></div>`;const renderSets=()=>{const item=workoutSession.exercises.find(x=>x.exerciseId===exercise.exerciseId);block.querySelector(".set-log").innerHTML=item.sets.map((set,index)=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:.75rem;border-top:1px solid var(--border-color);margin-top:9px;padding-top:8px"><span>第 ${index+1} 組</span><span><b>${set.weight} kg × ${set.reps}</b> <button class="remove-draft-set secondary-button" data-set-index="${index}" type="button" style="padding:3px 6px;margin-left:5px">移除</button></span></div>`).join("");block.querySelectorAll(".remove-draft-set").forEach(button=>button.onclick=()=>{item.sets.splice(Number(button.dataset.setIndex),1);item.sets.forEach((set,index)=>set.setNumber=index+1);persistWorkoutDraft();renderSets();});};block.querySelector(".complete-set").onclick=()=>{const weight=num(block.querySelector(".exercise-weight").value),reps=num(block.querySelector(".exercise-reps").value);if(!validWorkoutSet(weight,reps))return toast("重量須為 0–1000 kg，次數須為 1–10000 的整數。");const item=workoutSession.exercises.find(x=>x.exerciseId===exercise.exerciseId),set={setNumber:item.sets.length+1,weight,reps,volume:weight*reps};item.sets.push(set);persistWorkoutDraft();renderSets();};document.getElementById("exercise-session-list").appendChild(block);renderSets();}
+    function createExerciseBlock(exercise){document.getElementById("workout-empty-state")?.remove();const block=document.createElement("div");block.className="card card-pad";block.style.marginTop="12px";block.dataset.exerciseId=exercise.exerciseId;block.innerHTML=`<b>${escapeHtml(exercise.exerciseName)} · ${escapeHtml(exerciseBodyPartName(exercise))}</b><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><input class="form-input exercise-weight" aria-label="重量 kg" type="number" min="0" max="1000" step="any" placeholder="重量 kg"><input class="form-input exercise-reps" aria-label="次數" type="number" min="1" max="10000" step="1" placeholder="次數"></div><label>計重方式<select class="form-input exercise-load-basis">${TrainingPersonal.basisOptions()}</select></label><label><input type="checkbox" class="exercise-warmup"> 暖身組</label><button class="primary-button complete-set" style="margin-top:9px;width:100%" type="button">完成一組</button><div class="set-log"></div>`;const renderSets=()=>{const item=workoutSession.exercises.find(x=>x.exerciseId===exercise.exerciseId);block.querySelector(".set-log").innerHTML=item.sets.map((set,index)=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:.75rem;border-top:1px solid var(--border-color);margin-top:9px;padding-top:8px"><span>第 ${index+1} 組</span><span><b>${set.weight} kg × ${set.reps}</b> <button class="remove-draft-set secondary-button" data-set-index="${index}" type="button" style="padding:3px 6px;margin-left:5px">移除</button></span></div>`).join("");block.querySelectorAll(".remove-draft-set").forEach(button=>button.onclick=()=>{item.sets.splice(Number(button.dataset.setIndex),1);item.sets.forEach((set,index)=>set.setNumber=index+1);persistWorkoutDraft();renderSets();});};block.querySelector(".complete-set").onclick=()=>{const weight=num(block.querySelector(".exercise-weight").value),reps=num(block.querySelector(".exercise-reps").value);if(!validWorkoutSet(weight,reps))return toast("重量須為 0–1000 kg，次數須為 1–10000 的整數。");const item=workoutSession.exercises.find(x=>x.exerciseId===exercise.exerciseId),set={setNumber:item.sets.length+1,weight,reps,volume:weight*reps,loadBasis:block.querySelector('.exercise-load-basis').value,warmup:block.querySelector('.exercise-warmup').checked};item.sets.push(set);persistWorkoutDraft();renderSets();};document.getElementById("exercise-session-list").appendChild(block);renderSets();}
     function initTheme(){const mode=localStorage.getItem("themeMode")||"system",accent=localStorage.getItem("themeColor")||"blue";document.documentElement.dataset.accent=accent;applyThemeMode(mode);refreshThemeOptions();}
     function applyThemeMode(mode){const dark=mode==="dark"||(mode==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.dataset.theme=dark?"dark":"light";document.getElementById("header-theme-toggle").innerHTML=dark?'<i data-lucide="sun"></i>':'<i data-lucide="moon"></i>';renderIcons();if(sharedTrendVisible){sharedTrendRenderKey="";renderSharedHealthTrends(true);}}
     function refreshThemeOptions(){const mode=localStorage.getItem("themeMode")||"system",accent=localStorage.getItem("themeColor")||"blue";document.querySelectorAll("[data-mode]").forEach(x=>x.classList.toggle("active",x.dataset.mode===mode));document.querySelectorAll("[data-accent-option]").forEach(x=>x.classList.toggle("active",x.dataset.accentOption===accent));}
