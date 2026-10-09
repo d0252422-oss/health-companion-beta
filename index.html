@@ -2,9 +2,9 @@
 <html lang="zh-Hant">
  <head><meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="health-companion-build" content="20261009-beta-training-goals-11">
+  <meta name="health-companion-build" content="20261009-beta-training-best-12">
   <title>健康陪跑 Health Companion</title>
-  <script src="scripts/build-version.js?v=20261009-beta-training-goals-11"></script>
+  <script src="scripts/build-version.js?v=20261009-beta-training-best-12"></script>
   <script id="lucide-sdk" async src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <style>
@@ -81,7 +81,7 @@
     @keyframes state-spin{to{transform:rotate(360deg)}}
     .partial-state{padding:var(--space-4);border:1px solid color-mix(in srgb,var(--status-warning) 55%,var(--border-color));border-radius:12px;background:color-mix(in srgb,var(--status-warning) 8%,var(--bg-card));color:var(--text-primary);font-size:.8rem;line-height:1.55}.partial-state p{margin:0 0 8px}.partial-state .secondary-button{min-height:40px}
     .score-domain small{display:block;margin-top:4px;color:var(--text-secondary);font-size:.61rem;line-height:1.35;overflow-wrap:anywhere}
-  .pr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}#training-personal-panel label{display:block;margin:10px 0}#training-personal-panel details{margin:12px 0}#training-personal-panel button{margin:4px}#training-personal-evidence{overflow-wrap:anywhere}</style>
+  #training-personal-panel [hidden]{display:none!important}#training-personal-panel .pr-best-card{margin:0}.pr-best-card{width:100%;text-align:left;min-width:0;overflow-wrap:anywhere}.pr-best-value{font-size:1.55rem;font-weight:700;margin:10px 0}.pr-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}#training-personal-panel label{display:block;margin:10px 0}#training-personal-panel details{margin:12px 0}#training-personal-panel button{margin:4px}#training-personal-evidence{overflow-wrap:anywhere}</style>
   </head>
  <body data-template-id="__page-root">
   <div id="authenticated-app" class="app-wrapper" aria-hidden="true" inert>
@@ -360,9 +360,11 @@
          <button id="training-personal-refresh" type="button" class="secondary-button">重新讀取</button>
          <div id="training-personal-content" aria-live="polite"></div>
          <form id="training-goal-form" hidden><h3>訓練目標設定</h3>
+          <label>目標類型<select id="goal-type" class="form-input"><option value="MAX_WEIGHT">最大重量目標</option><option value="MAX_SET_VOLUME">單組訓練量目標</option></select></label>
           <label>動作<select id="goal-exercise" class="form-input" required></select></label>
           <label>計重方式<select id="goal-basis" class="form-input" required></select></label>
-          <div class="pr-cards"><label>目標重量<input id="goal-load" class="form-input" type="number" min="0.000001" step="any" required></label><label>單位<select id="goal-unit" class="form-input"><option value="kg">kg</option><option value="lb">lb</option></select></label><label>目標完成次數<input id="goal-reps" class="form-input" type="number" min="1" max="10000" step="1" required></label></div>
+          <div class="pr-cards"><label>目標重量<input id="goal-load" class="form-input" type="number" min="0.000001" step="any" required></label><label>單位<select id="goal-unit" class="form-input"><option value="kg">kg</option><option value="lb">lb</option></select></label><label id="goal-reps-field">目標次數<input id="goal-reps" class="form-input" type="number" min="1" max="10000" step="1" required></label></div>
+          <p id="goal-target-preview" aria-live="polite"></p>
           <label>開始日期<input id="goal-start" class="form-input" type="date" required></label><label>截止日期（可選）<input id="goal-end" class="form-input" type="date"></label>
           <details><summary>器材／變式／側別（已有識別時填寫）</summary><p>必須與原始組的識別相同才會比較；留白不代表包含所有器材。</p><label>變式識別<input id="goal-variant" class="form-input" maxlength="128"></label><label>器材識別<input id="goal-equipment" class="form-input" maxlength="128"></label><label>側別識別<input id="goal-side" class="form-input" maxlength="128"></label></details>
           <button id="goal-save" class="primary-button" type="submit">儲存目標</button><button id="goal-cancel" class="secondary-button" type="button">取消</button><p id="goal-form-status" role="status"></p>
@@ -740,12 +742,12 @@
    </div>
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="scripts/manual-sql-config.js?v=20261009-beta-training-goals-11"></script>
-  <script src="scripts/core-ux-contract.js?v=20261009-beta-training-goals-11"></script>
-  <script src="scripts/local-engine-web.js?v=20261009-beta-training-goals-11"></script>
-  <script src="scripts/training-personal-web.js?v=20261009-beta-training-goals-11"></script>
-  <script src="scripts/web-view-state.js?v=20261009-beta-training-goals-11"></script>
-  <script src="scripts/manual-observation-web.js?v=20261009-beta-training-goals-11"></script>
+  <script src="scripts/manual-sql-config.js?v=20261009-beta-training-best-12"></script>
+  <script src="scripts/core-ux-contract.js?v=20261009-beta-training-best-12"></script>
+  <script src="scripts/local-engine-web.js?v=20261009-beta-training-best-12"></script>
+  <script src="scripts/training-personal-web.js?v=20261009-beta-training-best-12"></script>
+  <script src="scripts/web-view-state.js?v=20261009-beta-training-best-12"></script>
+  <script src="scripts/manual-observation-web.js?v=20261009-beta-training-best-12"></script>
   <script>
     const APP_STARTED_AT=performance.now();
     const PERF_DEBUG=new URLSearchParams(location.search).get("debugPerf")==="1";
