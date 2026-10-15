@@ -2,16 +2,41 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const ui=require('../scripts/training-personal-web.js');
 const source=fs.readFileSync(require.resolve('../scripts/training-personal-web.js'),'utf8');
 function deferred(){let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};}
-function harness(){
+function harness({transport=false}={}){
  const nodes=new Map(),calls=[];
  const element=id=>{if(/^(goal-basis|goal-variant|goal-equipment|goal-side|training-pr-basis|pr-source-confirm|pr-source-basis|pr-source-status)$/.test(id))throw Error('Removed DOM requested: '+id);if(!nodes.has(id))nodes.set(id,{id,hidden:id==='training-personal-panel',dataset:{},value:id==='training-personal-range'?'all':id==='training-personal-exercise'?'bench':'',textContent:'',innerHTML:'',replaceChildren(){this.innerHTML='';this.textContent='';},append(){},scrollIntoView(){},reset(){},reportValidity(){return true;},setCustomValidity(){}});return nodes.get(id);};
  const document={getElementById:element,addEventListener(){},createElement:()=>({})};
- const context=vm.createContext({document,Intl,Promise,Set,Map,Number,String,Date,console,currentUser:'A',localSessionEpoch:1,crypto:require('node:crypto').webcrypto,getLocalDateString:()=> '2026-10-09',readableError:e=>e.message,localEngineRequest:(action,payload)=>{const d=deferred();calls.push({action,payload,...d});return d.promise;}});
+ const context=vm.createContext({document,Intl,Promise,Set,Map,Number,String,Date,console,URL,Response,AbortSignal,currentUser:'A',localSessionEpoch:1,crypto:require('node:crypto').webcrypto,getLocalDateString:()=> '2026-10-09',readableError:e=>e.message,localEngineRequest:(action,payload)=>{const d=deferred();calls.push({action,payload,...d});return d.promise;},
+  sessionToken:'synthetic-session',HOSTED_MANUAL_SQL_ENABLED:true,LOCAL_ENGINE_ENABLED:false,
+  window:{HEALTH_MANUAL_SQL_CONFIG:{enabled:true,release:'AB',schemaVersion:'manual-sql-v1',projectRef:'uavimjgccigpbwqmfkhh',endpoint:'https://uavimjgccigpbwqmfkhh.supabase.co/functions/v1/mobile-health-beta/v1/engine/web'}},
+  fetch:(url,options)=>{const d=deferred();calls.push({url,options,...JSON.parse(options.body),...d});return d.promise;}});
+ if(transport){vm.runInContext(fs.readFileSync(require.resolve('../scripts/local-engine-web.js'),'utf8'),context);vm.runInContext("hostedManualBinding={token:sessionToken,canonical:'synthetic-owner'}",context);}
  vm.runInContext(source,context);context.TrainingPersonal.init();
- return {context,calls,element,finish:async(index,data)=>{calls[index].resolve(data);await new Promise(resolve=>setImmediate(resolve));}};
+ return {context,calls,element,finish:async(index,data)=>{calls[index].resolve(transport?new Response(JSON.stringify({ok:true,data}),{status:200}):data);await new Promise(resolve=>setImmediate(resolve));},flush:()=>new Promise(resolve=>setImmediate(resolve))};
 }
 const catalog=[{exerciseId:'bench',exerciseName:'Bench'}];
 const pr={range:{startDate:null,endDate:'2026-10-09'},groups:[],excluded:[]};
+// Sanitized Edge55 response shape, never a copy of private user records.
+const enteredPr={...pr,version:'training-personal-records-goals-v1.2.0',semantics:'MAX_WEIGHT_AND_SINGLE_SET_VOLUME',comparisonVersion:'training-entered-load-v1'};
+test('Edge55 personal records traverse the real hosted transport and render both independent bests',async()=>{
+ const h=harness({transport:true});h.element('open-personal-records').onclick();await h.flush();
+ await h.finish(0,[{...catalog[0],revision:1}]);
+ const a={recordId:'synthetic-weight',revision:'4',load:80,loadKg:80,unit:'kg',reps:5,date:'2026-10-07',volumeKgReps:400},b={...a,recordId:'synthetic-volume',revision:'9',load:60,loadKg:60,reps:10,volumeKgReps:600};
+ await h.finish(1,{...enteredPr,groups:[{exerciseName:'Bench',comparison:{exerciseId:'bench'},records:[a,b],maxWeight:a,maxSetVolume:b}]});
+ assert.equal(h.element('training-personal-content').dataset.state,'ready');
+ const html=h.element('training-personal-content').innerHTML;assert.match(html,/MAX_WEIGHT" data-pr-record="synthetic-weight" data-pr-revision="4"/);assert.match(html,/MAX_SET_VOLUME" data-pr-record="synthetic-volume" data-pr-revision="9"/);
+ assert.equal(h.calls[1].action,'getTrainingPersonalRecords');assert.equal(h.calls[1].options.headers['x-health-session-kind'],'web');assert.equal(h.calls[1].options.credentials,'omit');
+});
+test('valid empty Edge55 results traverse the transport without fabricating bests',async()=>{
+ const h=harness({transport:true});h.element('open-personal-records').onclick();await h.flush();await h.finish(0,[{...catalog[0],revision:1}]);await h.finish(1,enteredPr);
+ assert.equal(h.element('training-personal-content').dataset.state,'ready');assert.doesNotMatch(h.element('training-personal-content').innerHTML,/data-pr-record=/);
+});
+test('obsolete, unknown and malformed personal-record contracts remain rejected, not empty successes',async()=>{
+ for(const change of [{semantics:'EXACT_REPETITION_RECORDS'},{semantics:'UNKNOWN'},{version:'training-personal-records-goals-v0'},{comparisonVersion:'training-load-basis-v1'},{groups:null},{excluded:{}},{range:null}]){
+  const h=harness({transport:true});const pending=h.context.localEngineRequest('getTrainingPersonalRecords',{exerciseId:'bench',days:'all'});await h.flush();
+  const rejected=assert.rejects(pending,/MALFORMED_RESPONSE/);await h.finish(0,{...enteredPr,...change});await rejected;
+ }
+});
 test('no qualifier stays NULL with no invented zero percent',()=>{const view=ui.goalView({status:'IN_PROGRESS',qualifiedBest:null,achievementPercent:null,progressBarPercent:null,remainingLoadKg:null});assert.equal(view.bar,null);assert.equal(view.percent,'尚無符合次數條件的紀錄');assert.equal(view.remaining,'—');});
 test('overachievement preserves actual performance while progress bar remains capped',()=>{const view=ui.goalView({status:'ACHIEVED',qualifiedBest:{load:150,unit:'kg',reps:6,date:'2026-10-07'},achievementPercent:107.14,progressBarPercent:100,remainingLoadKg:0});assert.equal(view.bar,100);assert.match(view.best,/150 kg × 6/);assert.equal(view.percent,'107.14%');});
 test('classification DOM, validation and confirmation events are removed',()=>{

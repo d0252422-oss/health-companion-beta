@@ -216,7 +216,7 @@ function assertManualResponseShape(action,data,payload={}){
   if(action==='addWorkoutRecord')valid=workoutAddCorrelates(data);
   if(action==='updateWorkoutSet')valid=mutationRecord(data,{deleted:false})&&sameRecordId(data)&&sameRecordDate(data)&&(!payload.exerciseId||data.record.exerciseId===payload.exerciseId)&&samePayloadNumber(data.record,'weight')&&samePayloadNumber(data.record,'reps');
   if(action==='deleteWorkoutSet')valid=mutationRecord(data,{deleted:true})&&sameRecordId(data);
-  if(action==='getTrainingPersonalRecords')valid=object(data)&&data.semantics==='EXACT_REPETITION_RECORDS'&&Array.isArray(data.groups)&&Array.isArray(data.excluded)&&object(data.range);
+  if(action==='getTrainingPersonalRecords')valid=object(data)&&data.version==='training-personal-records-goals-v1.2.0'&&data.semantics==='MAX_WEIGHT_AND_SINGLE_SET_VOLUME'&&data.comparisonVersion==='training-entered-load-v1'&&Array.isArray(data.groups)&&Array.isArray(data.excluded)&&object(data.range);
   if(action==='getTrainingGoals')valid=object(data)&&Array.isArray(data.goals);
   if(action==='getTrainingSetEvidence')valid=object(data)&&object(data.record)&&data.record.recordId===payload.recordId&&String(data.record.revision)===String(payload.revision);
   if(action==='manageTrainingGoal')valid=goalReceipt(data)&&(!payload.goalId||data.goal.goalId===payload.goalId);
