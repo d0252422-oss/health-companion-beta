@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
 
-  const BUILD_ID = '20261017-beta-exercise-navigation-15';
+  const BUILD_ID = '20261017-beta-engines-rc3';
   const RECOVERY_PREFIX = 'healthCompanionBuildRecovery:';
 
   function recoveryUrl(href, liveBuildId) {
