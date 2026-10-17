@@ -15,10 +15,10 @@ const goalView=g=>{
  remaining:remaining==null?'—':number(remaining)+(volume?' kg·次':' kg'),
  progressLabel:volume?'單組訓練量達成率':'目標重量達成率',label:goalLabels[goalType(g)]};
 };
-let serial=0,tab='pr',catalog=[],goals=[],mounted=false;
+let serial=0,tab='pr',catalog=[],goals=[],lastPR=null,mounted=false;
 const byId=id=>document.getElementById(id);
 const currentGuard=()=>{const user=currentUser,epoch=localSessionEpoch,n=++serial;return ()=>user===currentUser&&epoch===localSessionEpoch&&n===serial;};
-function reset(){serial++;catalog=[];goals=[];if(mounted){byId('training-personal-content').replaceChildren();byId('training-personal-evidence').replaceChildren();byId('training-goal-form').hidden=true;byId('training-personal-panel').hidden=true;}}
+function reset(){serial++;catalog=[];goals=[];lastPR=null;if(mounted){byId('training-personal-content').replaceChildren();byId('training-personal-evidence').replaceChildren();byId('training-goal-form').hidden=true;byId('training-personal-panel').hidden=true;}}
 function evidenceButton(r,label='查看原始訓練組'){return `<button type="button" class="secondary-button" data-pr-record="${esc(r.recordId)}" data-pr-revision="${esc(r.revision)}">${esc(label)}</button>`;}
 function recordCard(r,metric){
  const volume=metric==='MAX_SET_VOLUME',label=volume?'最大訓練量':'最大重量';
@@ -28,16 +28,20 @@ function recordCard(r,metric){
  `<article class="card card-pad pr-best-card" data-pr-metric="${metric}">${contents}</article>`;
 }
 function renderPR(data){
+ lastPR=data;
  const range=data.range,text=range.startDate?`${range.startDate} ～ ${range.endDate}`:'歷史最佳（截至 '+range.endDate+'）';
  const group=data.groups[0];
- let html=`<p>${esc(text)}</p>${group?`<p>${esc(group.exerciseName)}</p>`:''}<div class="pr-cards">${recordCard(group?.maxWeight,'MAX_WEIGHT')}${recordCard(group?.maxSetVolume,'MAX_SET_VOLUME')}</div><p>依填寫重量計算，請維持相同記錄方式。</p><p>最大訓練量＝單組重量×次數</p>`;
+ let html=`<p>${esc(text)}</p>${group?`<p>${esc(catalog.find(e=>e.exerciseId===byId('training-personal-exercise').value)?.exerciseName||group.exerciseName)}</p>`:''}<div class="pr-cards">${recordCard(group?.maxWeight,'MAX_WEIGHT')}${recordCard(group?.maxSetVolume,'MAX_SET_VOLUME')}</div><p>依填寫重量計算，請維持相同記錄方式。</p><p>最大訓練量＝單組重量×次數</p>`;
  if(group)html+=`<details><summary>進階資訊／原始紀錄</summary>${group.records.map(r=>`<p>${esc(performanceText(r))} ${evidenceButton(r)}</p>`).join('')}</details>`;
  byId('training-personal-content').innerHTML=html;
 }
 function renderGoals(data){
  goals=data.goals;let html='<button type="button" id="training-goal-new" class="primary-button">新增目標</button>';
  if(!goals.length)html+='<p>尚未設定訓練目標。</p>';
- for(const g of goals){
+ const filter=byId('training-goals-filter').value||'all';
+ const visible=goals.filter(g=>filter==='all'||filter==='active'&&['NOT_STARTED','IN_PROGRESS'].includes(g.status)||filter===g.status);
+ if(goals.length&&!visible.length)html+='<p>此狀態尚無目標。</p>';
+ for(const g of visible){
  const v=goalView(g),type=goalType(g),name=catalog.find(e=>e.exerciseId===g.exerciseId)?.exerciseName||g.exerciseId;
  const target=type==='MAX_WEIGHT'?`${number(g.targetLoad)} ${g.targetUnit}`:type==='MAX_SET_VOLUME'?`${number(g.targetLoad)} ${g.targetUnit} × ${g.targetReps} 次＝${number(g.targetLoad*g.targetReps)} ${g.targetUnit}·次`:`${number(g.targetLoad)} ${g.targetUnit} × 至少 ${g.targetReps} 次`;
  const rule=type==='MAX_SET_VOLUME'?'按單組重量×次數達標，不要求重量與次數各自達到設定值。':type==='LOAD_AND_REPS'?'保留舊制：同一組重量與次數都須達標。':'';
@@ -55,17 +59,20 @@ function updateGoalPreview(){
 }
 async function load(){
  if(!mounted||byId('training-personal-panel').hidden)return;
- const current=currentGuard(),target=byId('training-personal-content');target.dataset.state='loading';target.textContent='正在讀取訓練資料…';byId('training-personal-evidence').replaceChildren();
+ lastPR=null;const current=currentGuard(),target=byId('training-personal-content');target.dataset.state='loading';target.textContent='正在讀取訓練資料…';byId('training-personal-evidence').replaceChildren();
  try{
-  if(!catalog.length){const result=await localEngineRequest('getExerciseDatabase');if(!current())return;catalog=result;const select=byId('training-personal-exercise');select.innerHTML=catalog.map(e=>`<option value="${esc(e.exerciseId)}">${esc(e.exerciseName)}${e.archived?'（已封存）':''}</option>`).join('');}
+  if(!catalog.length){const useShared=typeof exerciseCatalogRead==='function'&&typeof apiService!=='undefined',result=useShared?await exerciseCatalogRead():[await localEngineRequest('getExerciseDatabase'),[]];if(!current())return;catalog=result[0];if(useShared)exerciseBodyParts=result[1];}
+  byId('training-personal-exercise').onchange=load;
+  bindExerciseLookup('training-personal-exercise',{partId:'training-personal-part',searchId:'training-personal-search',statusId:'training-personal-status',getEntries:()=>catalog,includeArchived:true});
   if(tab==='pr'&&!byId('training-personal-exercise').value){target.textContent='尚無可選動作。';target.dataset.state='empty';return;}
   const result=tab==='pr'?await localEngineRequest('getTrainingPersonalRecords',{exerciseId:byId('training-personal-exercise').value,days:byId('training-personal-range').value}):await localEngineRequest('getTrainingGoals');
   if(!current())return;tab==='pr'?renderPR(result):renderGoals(result);target.dataset.state='ready';
  }catch(error){if(!current())return;target.dataset.state='error';target.textContent='訓練資料讀取失敗：'+(typeof readableError==='function'?readableError(error):error.message);const retry=document.createElement('button');retry.type='button';retry.textContent='重新讀取';retry.onclick=load;target.append(retry);}
 }
-function open(tabName){tab=tabName;byId('training-personal-panel').hidden=false;byId('training-personal-title').textContent=tab==='pr'?'個人最佳':'我的目標';byId('training-pr-controls').hidden=tab!=='pr';byId('training-goal-form').hidden=true;load();}
+function open(tabName){tab=tabName;byId('training-personal-panel').hidden=false;byId('training-personal-title').textContent=tab==='pr'?'個人最佳':'我的目標';byId('training-pr-controls').hidden=tab!=='pr';byId('training-goals-filter-field').hidden=tab!=='goals';byId('training-goal-form').hidden=true;load();}
 function editor(g){const form=byId('training-goal-form');form.reset();form.dataset.goalId=g?.goalId||'';form.dataset.revision=g?.revision||'';delete form.dataset.request;delete form.dataset.pending;
- byId('goal-exercise').innerHTML=catalog.filter(e=>!e.archived||e.exerciseId===g?.exerciseId).map(e=>`<option value="${esc(e.exerciseId)}">${esc(e.exerciseName)}</option>`).join('');if(g)byId('goal-exercise').value=g.exerciseId;
+ byId('goal-part').value='';byId('goal-search').value='';
+ bindExerciseLookup('goal-exercise',{partId:'goal-part',searchId:'goal-search',statusId:'goal-status',getEntries:()=>catalog,includeId:g?.exerciseId,selectedId:g?.exerciseId,fallbackName:g?.exerciseId});
  byId('goal-type').innerHTML=goalTypeOptions(g);byId('goal-type').value=g?goalType(g):'MAX_WEIGHT';byId('goal-type').disabled=!!g;byId('goal-form-status').textContent='';
  for(const [id,key,fallback]of[['goal-load','targetLoad',''],['goal-unit','targetUnit','kg'],['goal-reps','targetReps',''],['goal-start','startDate',getLocalDateString()],['goal-end','endDate','']])byId(id).value=g?.[key]??fallback;
  updateGoalPreview();form.hidden=false;form.scrollIntoView({block:'nearest',behavior:'smooth'});
@@ -84,12 +91,13 @@ async function showEvidence(button){const current=currentGuard(),target=byId('tr
  }catch(e){if(current())target.textContent='原始組無法讀取或已修訂，請重新整理：'+e.message;}
 }
 function init(){if(mounted||!byId('training-personal-panel'))return;mounted=true;byId('open-personal-records').onclick=()=>open('pr');byId('open-training-goals').onclick=()=>open('goals');byId('training-personal-refresh').onclick=load;byId('training-personal-exercise').onchange=load;byId('training-personal-range').onchange=load;byId('training-goal-form').onsubmit=saveGoal;byId('goal-cancel').onclick=()=>byId('training-goal-form').hidden=true;
+ byId('training-goals-filter').onchange=()=>renderGoals({goals});
  for(const id of['goal-type','goal-load','goal-reps','goal-unit'])byId(id).oninput=updateGoalPreview;
  byId('goal-end').oninput=()=>byId('goal-end').setCustomValidity('');byId('goal-start').oninput=()=>byId('goal-end').setCustomValidity('');
  byId('training-personal-content').onclick=async event=>{const button=event.target.closest('button');if(!button)return;if(button.dataset.prRecord)return showEvidence(button);if(button.id==='training-goal-new')return editor(null);const goal=goals.find(g=>g.goalId===(button.dataset.goalEdit||button.dataset.goalArchive));if(!goal)return;if(button.dataset.goalEdit)return editor(goal);
  const current=currentGuard();button.disabled=true;button.dataset.request||=crypto.randomUUID();try{await localEngineRequest('manageTrainingGoal',{operation:'archive',goalId:goal.goalId,revision:goal.revision,clientRequestId:button.dataset.request});if(current())await load();}catch(e){if(current())byId('training-personal-evidence').textContent=e.message;}finally{button.disabled=false;}};
 }
-root.TrainingPersonal={goalView,goalTypeOptions,performanceText,reset,invalidate(){if(mounted&&!byId('training-personal-panel').hidden)load();},init};
+root.TrainingPersonal={catalogChanged(entries){catalog=entries;if(!mounted)return;for(const id of ['training-personal-exercise','goal-exercise'])exercisePickerBindings.get(id)?.refresh();if(tab==='pr'&&lastPR)renderPR(lastPR);else if(tab==='goals')renderGoals({goals});},invalidateCatalog(){serial++;catalog=[];lastPR=null;},goalView,goalTypeOptions,performanceText,reset,invalidate(){if(mounted&&!byId('training-personal-panel').hidden)load();},init};
 if(typeof module!=='undefined')module.exports=root.TrainingPersonal;
 if(typeof document!=='undefined')document.addEventListener('DOMContentLoaded',init);
 })(typeof globalThis!=='undefined'?globalThis:this);

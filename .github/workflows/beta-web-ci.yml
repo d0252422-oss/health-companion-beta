@@ -16,8 +16,10 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '24'
+      - name: Install pinned DOM test dependency
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Targeted Web regression
-        run: node --test tests/training-day-card.test.cjs tests/build-recovery.test.cjs tests/web-readback.test.cjs tests/shared-chart.test.cjs tests/release-web.test.cjs tests/performance-requests.test.cjs tests/calendar-window.test.cjs tests/training-personal-web.test.cjs
+        run: node --test
       - name: Beta build and scoped secret scan
         run: node scripts/verify-web.cjs
       - name: Whitespace check

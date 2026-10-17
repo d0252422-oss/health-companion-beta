@@ -341,7 +341,33 @@
     });
   }
 
+  // One owner-scoped, fully-loaded catalog view for all exercise finders.
+  function exerciseCatalogView(entries, parts=[], {scope='active',query='',bodyPartId=''}={}) {
+    const normalize=v=>String(v??'').normalize('NFC').trim().replace(/\s+/gu,' ').toLocaleLowerCase('zh-TW');
+    const unique=new Map();
+    for(const row of Array.isArray(entries)?entries:[]){
+      if(!row||typeof row.exerciseId!=='string'||!row.exerciseId)continue;
+      const old=unique.get(row.exerciseId);if(!old||Number(row.revision??0)>=Number(old.revision??0))unique.set(row.exerciseId,row);
+    }
+    const names=new Map(parts.map(p=>[p.bodyPartId,p.displayName])),search=normalize(query);
+    const rows=[...unique.values()].filter(row=>{
+      const archived=row.archived===true||row.active===false;
+      if(scope==='active'&&archived||scope==='custom'&&(!row.custom||archived)||scope==='system'&&(row.custom||archived)||scope==='archived'&&!archived)return false;
+      if(bodyPartId&&(row.bodyPartId||'__unclassified__')!==bodyPartId)return false;
+      return !search||[row.exerciseName,row.originalName,row.alias].some(v=>normalize(v).includes(search));
+    });
+    const groups=new Map();
+    for(const row of rows){
+      const id=row.bodyPartId||'__unclassified__',known=names.get(id);
+      const group=groups.get(id)||{bodyPartId:id,displayName:known||row.bodyPartName||'未分類／舊資料',records:[]};
+      group.records.push(row);groups.set(id,group);
+    }
+    const order=new Map(parts.map((p,i)=>[p.bodyPartId,i]));
+    return {count:rows.length,groups:[...groups.values()].sort((a,b)=>(order.get(a.bodyPartId)??999)-(order.get(b.bodyPartId)??999)||a.displayName.localeCompare(b.displayName,'zh-TW')).map(g=>({...g,count:g.records.length,records:g.records.sort((a,b)=>String(a.exerciseName).localeCompare(String(b.exerciseName),'zh-TW')||a.exerciseId.localeCompare(b.exerciseId))}))};
+  }
+
   return Object.freeze({
+    exerciseCatalogView,
     nutrientKeys,
     isValidDateKey,
     localDateKey,

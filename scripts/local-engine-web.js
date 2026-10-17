@@ -125,7 +125,7 @@ function renderDailySqlReadNotice(section,rows){
   const totalRow=latestDailyMetricRow(rows,'totalCalories');
   document.getElementById('activity-total-note').textContent=totalRow?dailyMetricNotice(rows,'totalCalories'):'SQL 尚無此熱量類型的對應來源';
 }
-function clearLocalManualState(){globalThis.TrainingPersonal?.reset();invalidateHostedTimelineReads();manualProviderObservation=null;manualSourceEvidence=null;renderManualProviderStatus();hostedManualBinding=null;hostedIdentityPending=null;localSessionEpoch++;localOutputRequest++;localCatalogReadSequence++;localBodyRecords.clear();localMealRecords.clear();localPendingBodyWrites.clear();localObservationRecords.clear();localPendingObservationWrites.clear();if(typeof resetManualObservationState==='function')resetManualObservationState();localWorkoutRecords.clear();localPendingTrainingWrites.clear();localTrainingDraftLock(false);if(typeof exerciseDatabase!=='undefined')exerciseDatabase=[];if(typeof exerciseBodyParts!=='undefined')exerciseBodyParts=[];if(typeof workoutSession!=='undefined')workoutSession=null;document.getElementById('exercise-management')?.remove();const overview=document.getElementById('training-overview'),draft=document.getElementById('workout-session'),list=document.getElementById('exercise-session-list');if(overview?.style)overview.style.display='block';draft?.classList?.remove('active');list?.replaceChildren?.();if(typeof setTrainingView==='function')setTrainingView('overview');if(typeof loadWeightFormDate==='function')loadWeightFormDate.binding=null;}
+function clearLocalManualState(){resetExerciseNavigation();globalThis.TrainingPersonal?.reset();invalidateHostedTimelineReads();manualProviderObservation=null;manualSourceEvidence=null;renderManualProviderStatus();hostedManualBinding=null;hostedIdentityPending=null;localSessionEpoch++;localOutputRequest++;localCatalogReadSequence++;localBodyRecords.clear();localMealRecords.clear();localPendingBodyWrites.clear();localObservationRecords.clear();localPendingObservationWrites.clear();if(typeof resetManualObservationState==='function')resetManualObservationState();localWorkoutRecords.clear();localPendingTrainingWrites.clear();localTrainingDraftLock(false);if(typeof exerciseDatabase!=='undefined')exerciseDatabase=[];if(typeof exerciseBodyParts!=='undefined')exerciseBodyParts=[];if(typeof workoutSession!=='undefined')workoutSession=null;document.getElementById('exercise-management')?.remove();const overview=document.getElementById('training-overview'),draft=document.getElementById('workout-session'),list=document.getElementById('exercise-session-list');if(overview?.style)overview.style.display='block';draft?.classList?.remove('active');list?.replaceChildren?.();if(typeof setTrainingView==='function')setTrainingView('overview');if(typeof loadWeightFormDate==='function')loadWeightFormDate.binding=null;}
 let manualProviderObservation=null;
 let manualSourceEvidence=null;
 let manualSourceSerial=0;
@@ -153,7 +153,7 @@ function assertManualResponseShape(action,data,payload={}){
     const deleted=value.operation==='DELETE',recordId=value.recordId,revision=Number(value.record?.revision);
     return typeof recordId==='string'&&recordId.length>0&&['QUEUED','SAVED'].includes(value.status)&&value.deleted===deleted&&object(value.record)&&value.record.mealRecordId===recordId&&Number.isSafeInteger(revision)&&revision>0;
   };
-  const exerciseReceipt=value=>object(value)&&value.status==='SAVED'&&typeof value.exerciseId==='string'&&value.exerciseId.length>0&&Number.isSafeInteger(Number(value.revision))&&Number(value.revision)>0&&['create','rename','classify','archive','restore','delete'].includes(value.operation)&&(value.operation==='delete'?value.deleted===true:value.deleted!==true);
+  const exerciseReceipt=value=>object(value)&&value.status==='SAVED'&&typeof value.exerciseId==='string'&&value.exerciseId.length>0&&Number.isSafeInteger(Number(value.revision))&&Number(value.revision)>0&&['create','update','rename','classify','archive','restore','delete'].includes(value.operation)&&(value.operation==='delete'?value.deleted===true:value.deleted!==true);
   const workoutAddReceipt=value=>object(value)&&value.status==='SAVED'&&typeof value.sessionId==='string'&&value.sessionId.length>0&&Array.isArray(value.records)&&value.records.length>0&&value.records.every(record=>object(record)&&typeof record.recordId==='string'&&record.recordId.length>0&&record.sessionId===value.sessionId&&Number.isSafeInteger(Number(record.revision))&&Number(record.revision)>0);
   const workoutBatchReceipt=value=>{
     if(!object(value)||value.status!=='SAVED'||!Array.isArray(value.records)||!value.records.length||!Array.isArray(value.updatedRecordIds)||value.updatedRecordIds.length!==value.records.length)return false;
@@ -212,7 +212,7 @@ function assertManualResponseShape(action,data,payload={}){
   if(action==='upsertMealRecord')valid=mealReceipt(data,'UPSERT')&&(!payload.mealRecordId||data.recordId===payload.mealRecordId)&&mealCorrelates(data);
   if(action==='deleteMealRecord')valid=mealReceipt(data,'DELETE')&&(!payload.mealRecordId||data.recordId===payload.mealRecordId);
   if(action==='getMealWriteStatus')valid=object(data)&&typeof data.exists==='boolean'&&(data.exists===false||mealReceipt(data));
-  if(action==='manageExercise')valid=exerciseReceipt(data);
+  if(action==='manageExercise')valid=exerciseReceipt(data)&&(!payload.exerciseId||data.exerciseId===payload.exerciseId)&&(!payload.operation||data.operation===payload.operation);
   if(action==='addWorkoutRecord')valid=workoutAddCorrelates(data);
   if(action==='updateWorkoutSet')valid=mutationRecord(data,{deleted:false})&&sameRecordId(data)&&sameRecordDate(data)&&(!payload.exerciseId||data.record.exerciseId===payload.exerciseId)&&samePayloadNumber(data.record,'weight')&&samePayloadNumber(data.record,'reps');
   if(action==='deleteWorkoutSet')valid=mutationRecord(data,{deleted:true})&&sameRecordId(data);
@@ -366,7 +366,7 @@ async function localEngineRequest(action,payload={}){
   // snapshot/drain here only adds blocking SQL and network work. Keep this
   // diagnostic panel refresh for the explicit local-engine harness only.
   if(LOCAL_ENGINE_ENABLED&&(bodyMutation||['upsertMealRecord','deleteMealRecord','refreshDailyNutrition','refreshDerivedData'].includes(action)))queueMicrotask(refreshLocalEngineOutputs);
-  if(trainingMutation&&action!=='manageTrainingGoal')queueMicrotask(()=>globalThis.TrainingPersonal?.invalidate());
+  if(trainingMutation&&action!=='manageTrainingGoal')queueMicrotask(()=>action==='manageExercise'?globalThis.TrainingPersonal?.invalidateCatalog?.():globalThis.TrainingPersonal?.invalidate());
   return body.data;
 }
 function showLocalEngineLogin(){
@@ -431,72 +431,165 @@ function localEngineOutputText(result){
   return `${result.domain}: ${result.score===null?'— 資料不足':result.score} · ${result.score_status} · 完整度 ${Math.round(result.data_completeness*100)}% · ${result.engine_version}`;
 }
 
-// Management is inside the original training page; no second dashboard or catalog.
+// Shared finders consume the same complete authorized catalog. Search is local.
+const exercisePickerBindings=new Map();
+let exerciseManagerState=null,exerciseCatalogLoadPending=null;
+function resetExerciseNavigation(){
+ exerciseManagerState=null;exerciseCatalogLoadPending=null;exercisePickerBindings.clear();
+ const form=document.getElementById('exercise-catalog-form');form?.reset();if(form)form.onsubmit=null;
+ for(const id of ['exercise-search','edit-workout-search','edit-workout-group-search','training-personal-search','goal-search']){const el=document.getElementById(id);if(el){el.value='';el.oninput=null;}}
+ for(const id of ['exercise-select','muscle-group-select','edit-workout-exercise','edit-workout-muscle','edit-workout-group-exercise','edit-workout-group-muscle','training-personal-exercise','training-personal-part','goal-exercise','goal-part']){const el=document.getElementById(id);if(el){el.replaceChildren();if(['muscle-group-select','edit-workout-muscle','edit-workout-group-muscle','training-personal-part','goal-part'].includes(id))el.onchange=null;}}
+ form?.querySelectorAll?.('input,select,button').forEach(c=>c.disabled=false);
+ globalThis.TrainingPersonal?.reset();
+
+}
+function bindExerciseLookup(selectId,options={}){
+ const select=document.getElementById(selectId);if(!select)return;
+ const old=exercisePickerBindings.get(selectId),config={...old?.config,...options};
+ const binding={config,refresh(selectedId){
+  const entries=config.getEntries?config.getEntries():exerciseDatabase,parts=typeof exerciseBodyParts==='undefined'?[]:exerciseBodyParts;
+  const part=config.partId&&document.getElementById(config.partId),search=config.searchId&&document.getElementById(config.searchId),wanted=selectedId??select.value;
+  const scope=config.includeArchived?'all':'active';
+  const eligible=HealthCoreUX.exerciseCatalogView(entries,parts,{scope}).groups.flatMap(g=>g.records);
+  if(part){const selected=part.value;part.innerHTML='<option value="">所有部位</option>'+HealthCoreUX.exerciseCatalogView(entries,parts,{scope}).groups.map(g=>`<option value="${escapeHtml(g.bodyPartId)}">${escapeHtml(g.displayName)}（${g.count}）</option>`).join('');if([...part.options].some(o=>o.value===selected))part.value=selected;}
+  const view=HealthCoreUX.exerciseCatalogView(entries,parts,{scope,query:search?.value||'',bodyPartId:part?.value||''});
+  select.innerHTML=view.groups.map(g=>`<optgroup label="${escapeHtml(g.displayName)}">${g.records.map(e=>`<option value="${escapeHtml(e.exerciseId)}">${escapeHtml(e.exerciseName)}${e.archived?'（已封存）':''}</option>`).join('')}</optgroup>`).join('');
+  if(wanted&&![...select.options].some(o=>o.value===wanted)){
+   const keep=eligible.find(e=>e.exerciseId===wanted),historical=config.includeId===wanted;
+   if(keep||historical)select.insertAdjacentHTML('beforeend',`<option value="${escapeHtml(wanted)}">${escapeHtml(keep?.exerciseName||config.fallbackName||'歷史動作')}（目前選取／歷史紀錄）</option>`);
+  }
+  if(wanted&&[...select.options].some(o=>o.value===wanted))select.value=wanted;
+  if(!select.options.length)select.innerHTML='<option value="">尚無符合動作</option>';
+  select.disabled=!select.value;
+  const status=config.statusId&&document.getElementById(config.statusId);
+  if(status)status.textContent=view.count?`${view.count} 個動作`:search?.value?'找不到搜尋結果':part?.value?'此分類沒有動作':'尚無動作';
+ }};
+ exercisePickerBindings.set(selectId,binding);
+ const part=config.partId&&document.getElementById(config.partId),search=config.searchId&&document.getElementById(config.searchId);
+ if(part)part.onchange=()=>{binding.refresh();config.onFilter?.();};if(search)search.oninput=()=>binding.refresh();
+ binding.refresh(config.selectedId);delete config.selectedId;return binding;
+}
+function publishExerciseCatalog(entries){
+ globalThis.TrainingPersonal?.catalogChanged?.(entries);
+ for(const binding of exercisePickerBindings.values())binding.refresh();
+}
+function exerciseCatalogRead(){
+ if(!exerciseCatalogLoadPending){const epoch=localSessionEpoch;const pending=Promise.all([apiService.getExerciseDatabase(),apiService.getExerciseBodyParts()]);exerciseCatalogLoadPending=pending;pending.finally(()=>{if(epoch===localSessionEpoch&&exerciseCatalogLoadPending===pending)exerciseCatalogLoadPending=null;}).catch(()=>{});}
+ return exerciseCatalogLoadPending;
+}
 const CREATE_BODY_PART_VALUE='__create_body_part__';
 function populateExerciseBodyPartSelect(select,{selectedId='',allowCreate=false}={}){
-  select.replaceChildren();
-  for(const source of ['SYSTEM','USER']){
-    const parts=exerciseBodyParts.filter(part=>part.source===source);
-    if(!parts.length)continue;
-    const group=document.createElement('optgroup');group.label=source==='SYSTEM'?'系統訓練部位':'我的訓練部位';
-    for(const part of parts){const option=document.createElement('option');option.value=part.bodyPartId;option.textContent=part.displayName;group.append(option);}
-    select.append(group);
-  }
-  if(allowCreate){const option=document.createElement('option');option.value=CREATE_BODY_PART_VALUE;option.textContent='＋ 新增訓練部位';select.append(option);}
-  if(selectedId&&[...select.options].some(option=>option.value===selectedId))select.value=selectedId;
-  select.disabled=!select.options.length;
+ select.replaceChildren();
+ for(const source of ['SYSTEM','USER']){
+  const parts=exerciseBodyParts.filter(part=>part.source===source);if(!parts.length)continue;
+  const group=document.createElement('optgroup');group.label=source==='SYSTEM'?'系統訓練部位':'我的訓練部位';
+  for(const part of parts){const option=document.createElement('option');option.value=part.bodyPartId;option.textContent=part.displayName;group.append(option);}select.append(group);
+ }
+ if(selectedId&&![...select.options].some(o=>o.value===selectedId)){const option=document.createElement('option');option.value=selectedId;option.textContent='原有部位';select.append(option);}
+ if(allowCreate){const option=document.createElement('option');option.value=CREATE_BODY_PART_VALUE;option.textContent='＋ 新增訓練部位';select.append(option);}
+ if(selectedId)select.value=selectedId;select.disabled=!select.options.length;
 }
-function syncCreateBodyPartMode(){
-  const select=document.getElementById('exercise-create-body-part'),label=document.getElementById('exercise-create-new-body-part'),input=document.getElementById('exercise-create-body-part-name');
-  if(!select||!label||!input)return;
-  const creating=select.value===CREATE_BODY_PART_VALUE;label.hidden=!creating;input.required=creating;if(!creating)input.value='';
+function exerciseEditorCanClose(){
+ const state=exerciseManagerState;if(!state?.editing)return true;
+ if(state.pending||state.busy){document.getElementById('exercise-editor-status').textContent='正在核對儲存結果，請保留此表單。';return false;}
+ const form=document.getElementById('exercise-catalog-form'),dirty=state.initial!==JSON.stringify(exerciseEditorValues());
+ if(dirty&&!confirm('放棄尚未儲存的變更？'))return false;
+ state.editing=null;form?.reset();return true;
+}
+function exerciseEditorValues(){
+ const form=document.getElementById('exercise-catalog-form'),part=document.getElementById('exercise-edit-body-part'),creating=part.value===CREATE_BODY_PART_VALUE;
+ return {name:document.getElementById('exercise-edit-name').value,...(creating?{newBodyPartName:document.getElementById('exercise-edit-new-part').value}:{bodyPartId:part.value})};
+}
+function openExerciseEditor(exercise,trigger){
+ const state=exerciseManagerState;if(!state)return;
+ if(!openSheet('exercise-catalog-form'))return;
+ state.editing=exercise||{create:true};state.triggerId=exercise?.exerciseId||null;state.trigger=trigger;state.pending=null;
+ const form=document.getElementById('exercise-catalog-form');form.reset();form.querySelectorAll('input,select,button').forEach(c=>c.disabled=false);document.getElementById('exercise-editor-save').textContent='儲存變更';document.getElementById('exercise-delete').textContent='永久刪除此動作';
+ document.getElementById('exercise-editor-title').textContent=exercise?'編輯動作':'新增動作';
+ document.getElementById('exercise-edit-name').value=exercise?.exerciseName||'';
+ populateExerciseBodyPartSelect(document.getElementById('exercise-edit-body-part'),{selectedId:exercise?.bodyPartId,allowCreate:!exercise});
+ document.getElementById('exercise-edit-body-part').disabled=exercise&&!exercise.custom;
+ document.getElementById('exercise-new-part-field').hidden=true;document.getElementById('exercise-edit-new-part').required=false;
+ document.getElementById('exercise-delete-section').hidden=!exercise?.custom;
+ document.getElementById('exercise-editor-status').textContent='';
+ state.initial=JSON.stringify(exerciseEditorValues());
+}
+async function exerciseManagerMutation(payload,controls,status){
+ const state=exerciseManagerState,epoch=localSessionEpoch;if(!state||state.busy)return;
+ state.busy=true;controls.forEach(c=>c.disabled=true);status.textContent='儲存中…';
+ let committed=false;
+ try{
+  await localEngineRequest('manageExercise',payload);if(epoch!==localSessionEpoch||state!==exerciseManagerState)return;
+  committed=true;state.pending=null;state.initial=JSON.stringify(exerciseEditorValues());status.textContent='已儲存';
+  if(state.editing){state.editing=null;closeSheet();}
+  await state.reload(true);
+  if(epoch===localSessionEpoch&&state===exerciseManagerState){status.textContent='已儲存';document.getElementById('exercise-manager-status').textContent='已儲存';const target=state.triggerId&&[...document.querySelectorAll('#exercise-manager-list [data-edit-exercise]')].find(b=>b.dataset.editExercise===state.triggerId);(target||state.trigger||document.getElementById('exercise-manager-search'))?.focus();}
+ }catch(error){
+  if(epoch!==localSessionEpoch||state!==exerciseManagerState)return;
+  if(committed){state.loadFailed=true;document.getElementById('exercise-manager-status').textContent='已儲存，清單更新失敗，可重新讀取';}
+  else{const uncertain=!error.code||error.retryable||['REQUEST_TIMEOUT','MALFORMED_RESPONSE','HTTP_RESPONSE_CONTRACT_MISMATCH'].includes(error.code);if(uncertain){state.pending=payload;status.textContent='尚無法確認儲存結果；保留內容，按儲存即可核對並安全重試。';}else{state.pending=null;status.textContent=error.code==='EXERCISE_REFERENCED'?'有歷史引用，不能永久刪除；可以封存。':error.code==='STALE_REVISION'?'資料已被更新，請重新讀取後再編輯。':'儲存失敗：'+readableError(error);}}
+ }finally{if(state===exerciseManagerState){state.busy=false;controls.forEach(c=>c.disabled=!!state.pending&&c.tagName!=='BUTTON');if(state.pending&&state.editing){const save=document.getElementById('exercise-editor-save'),remove=document.getElementById('exercise-delete');save.disabled=state.pending.operation==='delete';remove.disabled=state.pending.operation!=='delete';if(!save.disabled)save.textContent='核對並重試儲存';if(!remove.disabled)remove.textContent='核對並重試刪除';}
+ if(state.editing&&!state.editing.create&&!state.editing.custom)document.getElementById('exercise-edit-body-part').disabled=true;}}
 }
 function setupLocalExerciseManagement(){
-  if(!LOCAL_EXERCISE_ENABLED)return;
-  document.getElementById('exercise-management')?.remove();
-  const panel=document.createElement('section');panel.id='exercise-management';panel.className='card card-pad';
-  panel.innerHTML='<button id="manage-exercises" type="button" class="secondary-button">管理我的動作</button><div id="exercise-manager" hidden><p>改名／個人別名不改歷史名稱與訓練量。封存可恢復；歷史紀錄仍可編修。SQL 手動訓練紀錄已保存；此項分數分析尚未啟用。</p><form id="exercise-create-form"><label>新自訂動作名稱<input id="exercise-create-name" class="form-input" maxlength="80" required></label><label>訓練部位<select id="exercise-create-body-part" class="select-input" required></select></label><label id="exercise-create-new-body-part" hidden>新訓練部位名稱<input id="exercise-create-body-part-name" class="form-input" maxlength="40"></label><button id="exercise-create-submit" type="submit">建立自訂動作</button></form><p id="exercise-manager-status" role="status"></p><div id="exercise-manager-list"></div><button id="exercise-manager-retry" type="button">重新載入</button></div>';
-  document.getElementById('training-overview').append(panel);
-  const load=async(successText='SQL 已讀回',attempt=0)=>{
-    const epoch=localSessionEpoch,status=document.getElementById('exercise-manager-status');status.textContent='載入中…';
-    try{const [entries,parts]=await Promise.all([apiService.getExerciseDatabase(),apiService.getExerciseBodyParts()]);if(epoch!==localSessionEpoch)return;exerciseBodyParts=parts;applyExerciseCatalog(entries);populateExerciseBodyPartSelect(document.getElementById('exercise-create-body-part'),{allowCreate:true});syncCreateBodyPartMode();renderLocalExerciseManager(entries,load);status.textContent=successText;}
-    catch(error){if(epoch!==localSessionEpoch)return;if(error.code==='STALE_CATALOG_RESPONSE'&&attempt<1)return load(successText,attempt+1);status.textContent='讀取失敗：'+error.message;}
-  };
-  document.getElementById('manage-exercises').onclick=()=>{document.getElementById('exercise-manager').hidden=false;void load();};
-  document.getElementById('exercise-manager-retry').onclick=()=>void load();
-  document.getElementById('exercise-create-body-part').onchange=syncCreateBodyPartMode;
-  document.getElementById('exercise-create-form').onsubmit=async event=>{
-    event.preventDefault();const button=document.getElementById('exercise-create-submit');if(button.disabled)return;
-    const epoch=localSessionEpoch,status=document.getElementById('exercise-manager-status'),controls=[...document.querySelectorAll('#exercise-create-form input,#exercise-create-form select,#exercise-create-form button')],bodyPartSelect=document.getElementById('exercise-create-body-part'),creatingNew=bodyPartSelect.value===CREATE_BODY_PART_VALUE;
-    const payload={operation:'create',name:document.getElementById('exercise-create-name').value,...(creatingNew?{newBodyPartName:document.getElementById('exercise-create-body-part-name').value}:{bodyPartId:bodyPartSelect.value})};
-    controls.forEach(c=>c.disabled=true);status.textContent='儲存中…';
-    try{const result=await localEngineRequest('manageExercise',payload);if(epoch!==localSessionEpoch)return;document.getElementById('exercise-create-form').reset();await load(creatingNew&&result.bodyPartReused?'此訓練部位已存在，已使用既有部位。':'SQL 已儲存並讀回');}
-    catch(error){if(epoch===localSessionEpoch)status.textContent='未完成：'+readableError(error);}
-    finally{controls.forEach(c=>c.disabled=false);}
-  };
+ if(!LOCAL_EXERCISE_ENABLED)return;
+ document.getElementById('exercise-management')?.remove();
+ const panel=document.createElement('section');panel.id='exercise-management';panel.className='card card-pad';
+ panel.innerHTML='<button id="manage-exercises" type="button" class="secondary-button" aria-expanded="false" aria-controls="exercise-manager">管理我的動作</button><div id="exercise-manager" hidden><div class="catalog-heading"><h3>我的動作</h3><button id="exercise-create-open" class="primary-button" type="button">＋ 新增動作</button></div><label class="form-label" for="exercise-manager-search">搜尋動作名稱或別名</label><input id="exercise-manager-search" class="form-input" type="search" placeholder="搜尋所有部位"><div class="catalog-tabs" role="group" aria-label="動作範圍"><button class="secondary-button" type="button" data-catalog-scope="custom" aria-pressed="true">我的自訂動作</button><button class="secondary-button" type="button" data-catalog-scope="system" aria-pressed="false">系統動作／別名</button><button class="secondary-button" type="button" data-catalog-scope="archived" aria-pressed="false">已封存</button></div><p id="exercise-manager-status" role="status"></p><div id="exercise-manager-list"></div><button id="exercise-manager-retry" class="secondary-button" type="button">重新讀取</button></div>';
+ document.getElementById('training-overview').append(panel);
+ const state=exerciseManagerState={scope:'custom',query:'',expanded:new Map(),entries:[],loaded:false,busy:false,editing:null,pending:null,loadFailed:false};
+ state.reload=async(afterSave=false)=>{
+  const epoch=localSessionEpoch;const status=document.getElementById('exercise-manager-status');if(!afterSave)status.textContent='載入中…';
+  try{const [entries,parts]=await exerciseCatalogRead();if(epoch!==localSessionEpoch||state!==exerciseManagerState)return;
+   exerciseBodyParts=parts;state.entries=entries;state.loaded=true;state.loadFailed=false;applyExerciseCatalog(entries);renderLocalExerciseManager(entries);
+   status.textContent='資料已更新';
+  }catch(error){if(epoch!==localSessionEpoch||state!==exerciseManagerState)return;state.loadFailed=true;status.textContent=afterSave?'已儲存，清單更新失敗，可重新讀取':'讀取失敗，請重新讀取：'+readableError(error);if(!state.loaded)document.getElementById('exercise-manager-list').replaceChildren();throw error;}
+ };
+ document.getElementById('manage-exercises').onclick=event=>{const manager=document.getElementById('exercise-manager');manager.hidden=!manager.hidden;event.currentTarget.setAttribute('aria-expanded',String(!manager.hidden));if(!manager.hidden&&!state.loaded)state.reload().catch(()=>{});};
+ document.getElementById('exercise-manager-retry').onclick=()=>{if(!state.busy)state.reload().catch(()=>{});};
+ document.getElementById('exercise-create-open').onclick=e=>{if(!state.busy&&!state.pending)openExerciseEditor(null,e.currentTarget);};
+ document.getElementById('exercise-manager-search').oninput=e=>{state.query=e.target.value;renderLocalExerciseManager(state.entries);};
+ panel.querySelectorAll('[data-catalog-scope]').forEach(button=>button.onclick=()=>{state.scope=button.dataset.catalogScope;panel.querySelectorAll('[data-catalog-scope]').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));renderLocalExerciseManager(state.entries);});
+ document.getElementById('exercise-edit-body-part').onchange=event=>{const creating=event.target.value===CREATE_BODY_PART_VALUE;document.getElementById('exercise-new-part-field').hidden=!creating;document.getElementById('exercise-edit-new-part').required=creating;};
+ document.getElementById('exercise-editor-cancel').onclick=()=>closeSheet();
+ document.getElementById('exercise-catalog-form').onsubmit=event=>{
+  event.preventDefault();const form=event.currentTarget;if(!form.reportValidity()||state.busy)return;
+  const item=state.editing;if(!item||state.pending&&!['create','update'].includes(state.pending.operation))return;
+  const values=exerciseEditorValues();if(!item.create&&!item.custom)delete values.bodyPartId;
+  const payload=state.pending||{operation:item.create?'create':'update',...(!item.create?{exerciseId:item.exerciseId,revision:item.revision}:{}),...values,clientRequestId:crypto.randomUUID()};
+  void exerciseManagerMutation(payload,[...form.querySelectorAll('input,select,button')],document.getElementById('exercise-editor-status'));
+ };
+ document.getElementById('exercise-delete').onclick=()=>{
+  const item=state.editing;if(!item?.custom||state.busy||state.pending&&state.pending.operation!=='delete')return;
+  if(!confirm('永久刪除此自訂動作？只有沒有任何歷史引用的動作才能刪除，此操作無法復原。'))return;
+  const payload=state.pending||{operation:'delete',exerciseId:item.exerciseId,revision:item.revision,clientRequestId:crypto.randomUUID()};
+  void exerciseManagerMutation(payload,[...document.querySelectorAll('#exercise-catalog-form input,#exercise-catalog-form select,#exercise-catalog-form button')],document.getElementById('exercise-editor-status'));
+ };
 }
-function renderLocalExerciseManager(entries,reload){
-  const list=document.getElementById('exercise-manager-list');list.replaceChildren();
-  for(const exercise of entries){
-    const row=document.createElement('article');row.dataset.exerciseId=exercise.exerciseId;row.style.marginBottom='16px';
-    const label=document.createElement('label');label.textContent=(exercise.custom?'本人自訂動作':'共享動作的個人別名')+(exercise.archived?' · 已封存':'');
-    const input=document.createElement('input');input.className='form-input exercise-manage-name';input.value=exercise.exerciseName;input.maxLength=80;input.setAttribute('aria-label','動作名稱');label.append(input);row.append(label);
-    const category=document.createElement('select');category.className='select-input exercise-manage-category';category.setAttribute('aria-label','訓練部位／分類');populateExerciseBodyPartSelect(category,{selectedId:exercise.bodyPartId});category.disabled=!exercise.custom;row.append(category);
-    const status=document.createElement('p');status.className='exercise-manage-result';status.setAttribute('role','status');
-    for(const [operation,title] of [['rename','儲存名稱'],...(exercise.custom?[['classify','儲存分類']]:[]),[exercise.archived?'restore':'archive',exercise.archived?'恢復動作':'封存／從我的清單隱藏'],...(exercise.custom?[['delete','永久刪除（僅無引用）']]:[])]){
-      const button=document.createElement('button');button.type='button';button.className='secondary-button';button.dataset.operation=operation;button.textContent=title;
-      button.onclick=async()=>{
-        const epoch=localSessionEpoch;
-        if(button.disabled)return;
-        if(operation==='delete'&&!confirm('永久刪除此自訂動作？只有沒有任何歷史引用的項目才能刪除；無法復原。'))return;
-        const buttons=[...list.querySelectorAll('button')];buttons.forEach(b=>b.disabled=true);status.textContent='儲存中…';
-        try{await localEngineRequest('manageExercise',{exerciseId:exercise.exerciseId,revision:exercise.revision,operation,...(operation==='rename'?{name:input.value}:operation==='classify'?{bodyPartId:category.value}:{})});
-          if(epoch!==localSessionEpoch)return;await reload('SQL 已儲存並讀回');}
-        catch(error){if(epoch===localSessionEpoch&&error.code!=='STALE_CATALOG_RESPONSE')status.textContent=error.code==='EXERCISE_REFERENCED'?'有歷史引用，不能永久刪除；可以封存。':'未完成：'+error.message;}
-        finally{buttons.forEach(b=>b.disabled=false);}
-      };row.append(button);
-    }row.append(status);list.append(row);
+function renderLocalExerciseManager(entries){
+ const state=exerciseManagerState,list=document.getElementById('exercise-manager-list');if(!state||!list)return;
+ const scroll=list.scrollTop;list.replaceChildren();
+ const view=HealthCoreUX.exerciseCatalogView(entries,exerciseBodyParts,{scope:state.scope,query:state.query});
+ if(!view.count){const empty=document.createElement('p');empty.textContent=state.query?'找不到搜尋結果':!entries.length?'尚未建立動作':state.scope==='archived'?'尚無已封存動作':'此範圍沒有動作';list.append(empty);return;}
+ for(const group of view.groups){
+  const section=document.createElement('section'),toggle=document.createElement('button'),content=document.createElement('div');
+  toggle.type='button';toggle.className='catalog-group-toggle secondary-button';toggle.textContent=`${group.displayName}（${group.count}）`;
+  content.id='exercise-part-'+encodeURIComponent(group.bodyPartId);const open=state.query?true:state.expanded.get(group.bodyPartId)!==false;
+  content.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.setAttribute('aria-controls',content.id);
+  toggle.onclick=()=>{content.hidden=!content.hidden;toggle.setAttribute('aria-expanded',String(!content.hidden));state.expanded.set(group.bodyPartId,!content.hidden);};
+  for(const exercise of group.records){
+   const row=document.createElement('article');row.className='catalog-row';row.dataset.exerciseId=exercise.exerciseId;
+   const name=document.createElement('span');name.className='catalog-row-name';name.textContent=exercise.exerciseName+(exercise.archived?' · 已封存':'');
+   const edit=document.createElement('button');edit.type='button';edit.className='secondary-button';edit.textContent='編輯';edit.dataset.editExercise=exercise.exerciseId;edit.setAttribute('aria-label','編輯 '+exercise.exerciseName);
+   edit.onclick=()=>{if(!state.busy&&!state.pending)openExerciseEditor(exercise,edit);};
+   const more=document.createElement('details');more.className='catalog-more';const summary=document.createElement('summary');summary.textContent='更多';summary.setAttribute('aria-label',exercise.exerciseName+' 更多操作');
+   const archive=document.createElement('button');archive.type='button';archive.className='secondary-button';archive.textContent=exercise.archived?'恢復':'封存';
+   const status=document.createElement('p');status.setAttribute('role','status');status.className='catalog-row-status';
+   let pending=null;archive.onclick=()=>{if(state.busy||state.pending&&(state.pending.exerciseId!==exercise.exerciseId||!['archive','restore'].includes(state.pending.operation)))return;const payload=state.pending||pending||{operation:exercise.archived?'restore':'archive',exerciseId:exercise.exerciseId,revision:exercise.revision,clientRequestId:crypto.randomUUID()};pending=payload;void exerciseManagerMutation(payload,[archive,edit],status).then(()=>{if(!state.pending)pending=null;});};
+   more.append(summary,archive);row.append(name,edit,more,status);content.append(row);
   }
+  section.append(toggle,content);list.append(section);
+ }list.scrollTop=scroll;
 }
 function localTrainingDraftLock(locked){
   if(typeof workoutSession!=='undefined'&&workoutSession){workoutSession.sqlLocked=locked;if(!locked)delete workoutSession.sqlEnvelope;}
