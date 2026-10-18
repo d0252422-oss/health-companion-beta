@@ -288,7 +288,7 @@
       const totalSets = finiteNumber(record?.totalSets);
       const totalVolume = finiteNumber(record?.totalVolume);
       group.totalSets += totalSets === null ? 1 : totalSets;
-      group.totalVolume += totalVolume === null ? 0 : totalVolume;
+      group.totalVolume = group.totalVolume === null || totalVolume === null ? null : group.totalVolume + totalVolume;
       group.records.push(record);
       if (record?.exerciseName && !group.historicalNames.includes(String(record.exerciseName))) {
         group.historicalNames.push(String(record.exerciseName));
@@ -306,6 +306,9 @@
         revision: positiveInteger(record?.revision),
         setOrder: positiveInteger(record?.setOrder),
         setNumber: positiveInteger(record?.setNumber) ?? session.sets.length + 1,
+        exerciseType: record?.exerciseType||null,
+        durationSeconds: finiteNumber(record?.durationSeconds),
+        distanceMeters: finiteNumber(record?.distanceMeters),
         weight: finiteNumber(record?.weight),
         reps: finiteNumber(record?.reps),
         totalVolume,
@@ -366,6 +369,12 @@
     return {count:rows.length,groups:[...groups.values()].sort((a,b)=>(order.get(a.bodyPartId)??999)-(order.get(b.bodyPartId)??999)||a.displayName.localeCompare(b.displayName,'zh-TW')).map(g=>({...g,count:g.records.length,records:g.records.sort((a,b)=>String(a.exerciseName).localeCompare(String(b.exerciseName),'zh-TW')||a.exerciseId.localeCompare(b.exerciseId))}))};
   }
 
+  function workoutSetLabel(set) {
+    if(set.exerciseType==='DURATION')return set.durationSeconds==null?'—':`${set.durationSeconds} 秒`;
+    if(set.exerciseType==='DISTANCE_DURATION')return `${set.distanceMeters??'—'} m · ${set.durationSeconds??'—'} 秒`;
+    if(set.exerciseType==='REPS')return `${set.reps??'—'} 次`;
+    return `${set.weight??'—'} kg × ${set.reps??'—'} 次${set.totalVolume==null?'':` · ${set.totalVolume} kg·次`}`;
+  }
   return Object.freeze({
     exerciseCatalogView,
     nutrientKeys,
@@ -390,6 +399,7 @@
     metricReadState,
     sortMealsByLocalTime,
     groupWorkoutRecords,
+    workoutSetLabel,
     workoutBatchUpdates,
   });
 });

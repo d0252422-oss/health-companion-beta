@@ -16,6 +16,7 @@ const hostedManualActions=new Set(['getAccessState','getCurrentUser','getUserPro
 const hostedTrainingActions=new Set(['getExerciseDatabase','getExerciseBodyParts','getWorkoutRecords','manageExercise','addWorkoutRecord','updateWorkoutSet','updateWorkoutSets','deleteWorkoutSet','getTrainingWriteStatus','getTrainingPersonalRecords','getTrainingGoals','getTrainingSetEvidence','manageTrainingGoal']);
 for(const action of ['getTrainingEngine','getHealthEngine','runFoodEngine','submitFoodEngineFeedback'])hostedManualActions.add(action);
 hostedTrainingActions.add('getTrainingEngine');
+for(const action of ['getTrainingWorkspace','getTrainingExerciseHistory','saveTrainingRoutine','saveExerciseSettings','startTrainingSession','upsertTrainingSet','finishTrainingSession']){hostedManualActions.add(action);hostedTrainingActions.add(action);}
 function hostedManualConfig(){
   const raw=window.HEALTH_MANUAL_SQL_CONFIG||{};
   const fail=()=>{const e=Error('MANUAL_PROVIDER_NOT_CONFIGURED');e.code=e.message;throw e;};
@@ -127,7 +128,7 @@ function renderDailySqlReadNotice(section,rows){
   const totalRow=latestDailyMetricRow(rows,'totalCalories');
   document.getElementById('activity-total-note').textContent=totalRow?dailyMetricNotice(rows,'totalCalories'):'SQL 尚無此熱量類型的對應來源';
 }
-function clearLocalManualState(){globalThis.HealthEngineUI?.clear?.();resetExerciseNavigation();globalThis.TrainingPersonal?.reset();invalidateHostedTimelineReads();manualProviderObservation=null;manualSourceEvidence=null;renderManualProviderStatus();hostedManualBinding=null;hostedIdentityPending=null;localSessionEpoch++;localOutputRequest++;localCatalogReadSequence++;localBodyRecords.clear();localMealRecords.clear();localPendingBodyWrites.clear();localObservationRecords.clear();localPendingObservationWrites.clear();if(typeof resetManualObservationState==='function')resetManualObservationState();localWorkoutRecords.clear();localPendingTrainingWrites.clear();localTrainingDraftLock(false);if(typeof exerciseDatabase!=='undefined')exerciseDatabase=[];if(typeof exerciseBodyParts!=='undefined')exerciseBodyParts=[];if(typeof workoutSession!=='undefined')workoutSession=null;document.getElementById('exercise-management')?.remove();const overview=document.getElementById('training-overview'),draft=document.getElementById('workout-session'),list=document.getElementById('exercise-session-list');if(overview?.style)overview.style.display='block';draft?.classList?.remove('active');list?.replaceChildren?.();if(typeof setTrainingView==='function')setTrainingView('overview');if(typeof loadWeightFormDate==='function')loadWeightFormDate.binding=null;}
+function clearLocalManualState(){globalThis.HealthWorkout?.reset?.();globalThis.HealthEngineUI?.clear?.();resetExerciseNavigation();globalThis.TrainingPersonal?.reset();invalidateHostedTimelineReads();manualProviderObservation=null;manualSourceEvidence=null;renderManualProviderStatus();hostedManualBinding=null;hostedIdentityPending=null;localSessionEpoch++;localOutputRequest++;localCatalogReadSequence++;localBodyRecords.clear();localMealRecords.clear();localPendingBodyWrites.clear();localObservationRecords.clear();localPendingObservationWrites.clear();if(typeof resetManualObservationState==='function')resetManualObservationState();localWorkoutRecords.clear();localPendingTrainingWrites.clear();localTrainingDraftLock(false);if(typeof exerciseDatabase!=='undefined')exerciseDatabase=[];if(typeof exerciseBodyParts!=='undefined')exerciseBodyParts=[];if(typeof workoutSession!=='undefined')workoutSession=null;document.getElementById('exercise-management')?.remove();const overview=document.getElementById('training-overview'),draft=document.getElementById('workout-session'),list=document.getElementById('exercise-session-list');if(overview?.style)overview.style.display='block';draft?.classList?.remove('active');list?.replaceChildren?.();if(typeof setTrainingView==='function')setTrainingView('overview');if(typeof loadWeightFormDate==='function')loadWeightFormDate.binding=null;}
 let manualProviderObservation=null;
 let manualSourceEvidence=null;
 let manualSourceSerial=0;
@@ -206,6 +207,9 @@ function assertManualResponseShape(action,data,payload={}){
     const optional=action==='getActivityRecords'?['heartRate','hrv','weight','bodyFatPercentage','spo2']:[];
     valid=Array.isArray(data)&&data.every(r=>object(r)&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&['CURRENT','STALE'].includes(r.dataStatus)&&(!Object.hasOwn(r,'analysisDataStatus')||['CURRENT','STALE'].includes(r.analysisDataStatus))&&keys.every(k=>r[k]===null||r.dataStatus==='CURRENT'&&typeof r[k]==='number'&&Number.isFinite(r[k]))&&optional.every(k=>!Object.hasOwn(r,k)||r[k]===null||r.dataStatus==='CURRENT'&&typeof r[k]==='number'&&Number.isFinite(r[k])));
   }
+  if(action==='getTrainingWorkspace')valid=object(data)&&data.schemaVersion==='training-workspace.v1'&&Array.isArray(data.routines)&&Array.isArray(data.sessions);
+  if(action==='getTrainingExerciseHistory')valid=object(data)&&Array.isArray(data.records)&&typeof data.hasMore==='boolean';
+  if(['saveTrainingRoutine','saveExerciseSettings','startTrainingSession','upsertTrainingSet','finishTrainingSession'].includes(action))valid=object(data)&&data.status==='SAVED'&&data.requestId===payload.clientRequestId;
   if(action==='getHealthTimeline')valid=object(data)&&Array.isArray(data.timeline)&&data.timeline.every(object);
   if(['addBodyRecord','upsertBodyRecord','deleteBodyRecord'].includes(action))valid=bodyReceipt(data)&&(action==='deleteBodyRecord'?data.deleted===true:data.deleted===false)&&(action==='deleteBodyRecord'?sameRecordId(data):bodyCorrelates(data));
   if(action==='getBodyWriteStatus')valid=object(data)&&typeof data.exists==='boolean'&&(data.exists===false||bodyReceipt(data));
@@ -297,9 +301,11 @@ function localManualBodyNotice(displayedWeightRow=null){
     note.textContent+=' · '+label;
   }else if(note)delete note.dataset.analysisStatus;
 }
-async function localEngineRequest(action,payload={}){
+async function localEngineRequest(action,payload={},expectedIdentity=null){
+  const guard=()=>{if(expectedIdentity&&(expectedIdentity.epoch!==localSessionEpoch||(hostedManualBinding?.canonical||currentUser?.userId)!==expectedIdentity.owner))throw Object.assign(Error('IDENTITY_CHANGED'),{code:'IDENTITY_CHANGED'});};guard();
   if(!manualSqlEnabled())throw Error('LOCAL_ENGINE_DISABLED');
   if(hostedManualEnabled())await ensureHostedManualIdentity();
+  guard();
   // getManualProviderIdentity already authenticates the Web session, resolves the
   // canonical user and returns the authoritative entitlement. Avoid a second
   // sequential Edge round trip during every hosted app bootstrap.
@@ -314,7 +320,7 @@ async function localEngineRequest(action,payload={}){
   if(action==='manageExercise')localCatalogReadSequence++;
   const observationMutation=['upsertManualObservation','deleteManualObservation'].includes(action);
   const bodyMutation=['addBodyRecord','upsertBodyRecord','deleteBodyRecord'].includes(action);
-  const trainingMutation=['manageTrainingGoal','manageExercise','addWorkoutRecord','updateWorkoutSet','updateWorkoutSets','deleteWorkoutSet'].includes(action);
+  const trainingMutation=['saveTrainingRoutine','saveExerciseSettings','startTrainingSession','upsertTrainingSet','finishTrainingSession','manageTrainingGoal','manageExercise','addWorkoutRecord','updateWorkoutSet','updateWorkoutSets','deleteWorkoutSet'].includes(action);
   let observationKey;
   if(observationMutation){observationKey=action+'|'+JSON.stringify(payload);let pending=localPendingObservationWrites.get(observationKey);if(!pending){const old=localObservationRecords.get(payload.recordId);pending=structuredClone({...payload,revision:payload.revision??old?.revision,clientRequestId:payload.clientRequestId||crypto.randomUUID()});localPendingObservationWrites.set(observationKey,pending);}payload=pending;manualSourceSequences.set('getManualObservations',++manualSourceSerial);}
   let pendingKey;
@@ -603,15 +609,15 @@ function localTrainingDraftLock(locked){
 }
 function localTrainingDailyRows(records){
   const days=new Map(),sessions=new Map();
-  for(const row of [...records].sort((a,b)=>a.date.localeCompare(b.date))){if(!row.date)continue;const day=days.get(row.date)||{date:row.date,trainingSets:0,trainingVolume:0,trainingDuration:0};day.trainingSets+=row.totalSets??1;day.trainingVolume+=row.totalVolume??0;days.set(row.date,day);const key=row.sessionId||row.recordId;const previous=sessions.get(key);sessions.set(key,{date:previous?.date||row.date,duration:Math.max(previous?.duration||0,row.durationMinutes||0)});}
+  for(const row of [...records].sort((a,b)=>a.date.localeCompare(b.date))){if(!row.date)continue;const day=days.get(row.date)||{date:row.date,trainingSets:0,trainingVolume:0,trainingDuration:0};day.trainingSets+=row.totalSets??1;day.trainingVolume=day.trainingVolume===null||row.totalVolume==null?null:day.trainingVolume+row.totalVolume;days.set(row.date,day);const key=row.sessionId||row.recordId;const previous=sessions.get(key);sessions.set(key,{date:previous?.date||row.date,duration:row.exerciseType?(previous?.duration===null||row.durationMinutes==null?null:(previous?.duration??0)+row.durationMinutes):row.durationMinutes==null?previous?.duration??null:Math.max(previous?.duration??0,row.durationMinutes)});}
   // A split session counts once, attributed to its earliest retained date in this range.
-  for(const session of sessions.values())days.get(session.date).trainingDuration+=session.duration;
+  for(const session of sessions.values()){const day=days.get(session.date);day.trainingDuration=day.trainingDuration===null||session.duration===null?null:day.trainingDuration+session.duration;}
   return [...days.values()];
 }
 function localTrainingSummary(records,reportedTotalSets,reportedTotalVolume){
   const rows=Array.isArray(records)?records:[],trainingDates=new Set(rows.map(row=>row?.date).filter(date=>/^\d{4}-\d{2}-\d{2}$/.test(date)));
   const fallbackSets=rows.reduce((total,row)=>total+(Number.isFinite(Number(row?.totalSets))?Number(row.totalSets):1),0);
-  const fallbackVolume=rows.length?rows.reduce((total,row)=>total+(Number.isFinite(Number(row?.totalVolume))?Number(row.totalVolume):0),0):null;
+  const fallbackVolume=rows.length&&rows.every(row=>typeof row.totalVolume==='number'&&Number.isFinite(row.totalVolume))?rows.reduce((total,row)=>total+row.totalVolume,0):null;
   const totalSets=Number.isFinite(Number(reportedTotalSets))?Number(reportedTotalSets):fallbackSets;
   const totalVolume=reportedTotalVolume===null?null:Number.isFinite(Number(reportedTotalVolume))?Number(reportedTotalVolume):fallbackVolume;
   const trainingDays=trainingDates.size;
