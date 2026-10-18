@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "fake-indexeddb": "6.2.5",
     "jsdom": "26.1.0"
   },
   "private": true,
