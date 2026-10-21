@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "repository": "d0252422-oss/health-companion-beta",
+  "target": "beta",
+  "release_type": "web",
+  "candidate_sha": "d1bf1d45bb0603b48fe95f34c4bcad6bf62460a7",
+  "source_candidate_sha": "ece13cf3cf0c2674cfb5a8a945c8b4041ef20db4",
+  "expected_build_id": "20261004-beta-training-days-recovery-06",
+  "required_tests": ["tests/training-day-card.test.cjs", "tests/build-recovery.test.cjs", "tests/web-readback.test.cjs", "tests/shared-chart.test.cjs", "tests/release-web.test.cjs"],
+  "migration_required": false,
+  "edge_required": false,
+  "web_required": true,
+  "apk_required": false,
+  "created_at": "2026-10-04T13:18:52Z",
+  "assets": [
+    {"path": ".nojekyll", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+    {"path": "index.html", "sha256": "e535983ce21673803d92f0dee4db80b13563659e8212e4e3d18d6c5d7e75b849"},
+    {"path": "build.json", "sha256": "77f4d578d9a8d992eddde63640b76df733973dc94fb946d1b7dae88e79fc0b63"},
+    {"path": "scripts/build-version.js", "sha256": "c2d5a4011461e1111615fda47137c565a65b1491affa76bb343e16c105462d22"},
+    {"path": "scripts/manual-sql-config.js", "sha256": "82fe8c23275c56bdfaad3f0f9309a800c82c52574ae888d7593fa534e92b197a"},
+    {"path": "scripts/core-ux-contract.js", "sha256": "5283443e54ce6032822edf627de637673ec821d381d32ff01dbb51c8a8c87eb7"},
+    {"path": "scripts/local-engine-web.js", "sha256": "2e7522266d56deb36931f8d5689e420996df190e2ed93c4bd6d1c07b378165a7"},
+    {"path": "scripts/web-view-state.js", "sha256": "7518ef173a31429f93988d86bea951f6451b5c7c766f535dc47628444a847f29"},
+    {"path": "scripts/manual-observation-web.js", "sha256": "2f3f107a27e329c5e79812906d528566e05b5189c8b225173b3ebf1908415b2b"}
+  ]
+}

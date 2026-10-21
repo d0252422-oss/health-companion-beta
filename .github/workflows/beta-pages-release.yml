@@ -1,0 +1,106 @@
+name: Beta Pages Release
+on:
+  push:
+    branches: [main]
+    paths: ['.ai-pool/release/candidate.json', '.github/workflows/beta-pages-release.yml', 'scripts/release-contract.cjs']
+  workflow_dispatch:
+    inputs:
+      redeploy:
+        description: 'Explicit recovery: re-publish the same validated candidate'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: beta-pages-release
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'd0252422-oss/health-companion-beta' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      candidate_sha: ${{ steps.manifest.outputs.candidate_sha }}
+      already_current: ${{ steps.probe.outputs.current }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: controller
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - name: Validate release contract and safety tests
+        id: manifest
+        run: |
+          node --test controller/tests/release-contract.test.cjs
+          node controller/scripts/release-contract.cjs validate
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ steps.manifest.outputs.candidate_sha }}
+          path: candidate
+          persist-credentials: false
+      - name: Re-test exact candidate
+        working-directory: candidate
+        run: node --test tests/training-day-card.test.cjs tests/build-recovery.test.cjs tests/web-readback.test.cjs tests/shared-chart.test.cjs tests/release-web.test.cjs
+      - name: Build allowlisted static assets and verify pinned hashes
+        run: node controller/scripts/release-contract.cjs build candidate site
+      - name: Detect exact duplicate deployment
+        id: probe
+        run: node controller/scripts/release-contract.cjs probe
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        if: steps.probe.outputs.current != 'true' || inputs.redeploy == true
+        with:
+          path: site
+  deploy:
+    needs: build
+    if: needs.build.outputs.already_current != 'true' || inputs.redeploy == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+        id: deployment
+  verify:
+    needs: [build, deploy]
+    if: always() && needs.build.result == 'success' && (needs.deploy.result == 'success' || needs.build.outputs.already_current == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - run: node scripts/release-contract.cjs verify
+  record:
+    needs: [build, deploy, verify]
+    if: always() && github.repository == 'd0252422-oss/health-companion-beta' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - run: node scripts/release-contract.cjs result
+        env:
+          BUILD_RESULT: ${{ needs.build.result }}
+          PAGES_RESULT: ${{ needs.deploy.result }}
+          VERIFY_RESULT: ${{ needs.verify.result }}
+          ALREADY_CURRENT: ${{ needs.build.outputs.already_current }}
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: beta-release-result-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .ai-pool/release-results/*.json
+          if-no-files-found: error
+          retention-days: 90
+          include-hidden-files: true
