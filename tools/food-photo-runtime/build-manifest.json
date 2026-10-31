@@ -2,8 +2,8 @@
   "schema_version": "clip-only-build.v1",
   "upstream": "@huggingface/transformers@4.3.2",
   "esbuild": "0.28.2",
-  "entry_sha256": "f8afbb153447d1821a8c6e73477eb4b72d0f5fed13ce5b2ab77ec62944eea081",
-  "lock_sha256": "09c8d7bc49e1d1c189fb6e131769de20b55d7cf7007ac69e1a50a55180862903",
+  "entry_sha256": "2f1c5543eec3d5c0f7897ac8d34c79b2121b351885e6e0f4e58005fb4e607982",
+  "lock_sha256": "1d4650148a588e7b207f387b796af9441c50c2392a06ad96102e86589cfd82ba",
   "output": {
     "path": "scripts/food-photo-vendor/transformers-clip-only.mjs",
     "bytes": 522639,
@@ -324,8 +324,8 @@
     },
     {
       "path": "clip-session-entry.mjs",
-      "bytes": 3197,
-      "sha256": "f8afbb153447d1821a8c6e73477eb4b72d0f5fed13ce5b2ab77ec62944eea081"
+      "bytes": 3144,
+      "sha256": "2f1c5543eec3d5c0f7897ac8d34c79b2121b351885e6e0f4e58005fb4e607982"
     }
   ]
 }
