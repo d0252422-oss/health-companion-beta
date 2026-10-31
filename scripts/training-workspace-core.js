@@ -42,7 +42,7 @@
   function supportedState(state){if(state?.schema!==VERSION||!Array.isArray(state.queue))throw Error('UNSUPPORTED_QUEUE_VERSION');return state;}
   function initialState(){return {schema:VERSION,draft:null,routines:[],history:[],catalog:[],queue:[],conflict:null};}
   class IndexedRepository{
-    constructor(indexedDB=globalThis.indexedDB){this.db=new Promise((resolve,reject)=>{const request=indexedDB.open('health-training-workspace',1);request.onupgradeneeded=()=>request.result.createObjectStore('accounts');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);});}
+    constructor(indexedDB=globalThis.indexedDB){this.db=new Promise((resolve,reject)=>{const request=indexedDB.open('health-training-workspace',2);request.onupgradeneeded=()=>{for(const store of ['accounts','mealDrafts'])if(!request.result.objectStoreNames.contains(store))request.result.createObjectStore(store);};request.onsuccess=()=>{request.result.onversionchange=()=>request.result.close();resolve(request.result);};request.onerror=()=>reject(request.error);});}
     async change(key,mutator){const db=await this.db;return new Promise((resolve,reject)=>{const tx=db.transaction('accounts','readwrite'),store=tx.objectStore('accounts'),read=store.get(key);let result;
       read.onsuccess=()=>{try{const state=read.result||initialState();result=mutator(state);store.put(state,key);}catch(error){tx.abort();reject(error);}};
       tx.oncomplete=()=>resolve(clone(result));tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||Error('LOCAL_SAVE_FAILED'));});}
