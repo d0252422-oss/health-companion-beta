@@ -1,0 +1,331 @@
+{
+  "schema_version": "clip-only-build.v1",
+  "upstream": "@huggingface/transformers@4.3.2",
+  "esbuild": "0.28.2",
+  "entry_sha256": "2f1c5543eec3d5c0f7897ac8d34c79b2121b351885e6e0f4e58005fb4e607982",
+  "lock_sha256": "1d4650148a588e7b207f387b796af9441c50c2392a06ad96102e86589cfd82ba",
+  "output": {
+    "path": "scripts/food-photo-vendor/transformers-clip-only.mjs",
+    "bytes": 522639,
+    "sha256": "cf175bad12747f10bc3b864cc8b4d944b693b34bc6d74e93bf70a1492e583868"
+  },
+  "external_js_imports": [],
+  "unneeded_model_registry_pipeline_generation_inputs": 0,
+  "inputs": [
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/generic.js",
+      "bytes": 1290,
+      "sha256": "7d0ff689849468d540f063dcb080c99a7a081892b008e25a6aeb118460998b32"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/core.js",
+      "bytes": 7634,
+      "sha256": "b247bedbb4feab4a3699d2de88c23cbce6b5ef700bb23db828e6b39932f30787"
+    },
+    {
+      "path": "browser-unavailable:node:fs",
+      "bytes": 18,
+      "sha256": null
+    },
+    {
+      "path": "browser-unavailable:node:path",
+      "bytes": 18,
+      "sha256": null
+    },
+    {
+      "path": "browser-unavailable:node:url",
+      "bytes": 18,
+      "sha256": null
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/env.js",
+      "bytes": 12735,
+      "sha256": "23839bbb1a4e6e89036f655b171165ee5f4ddde6f28d5ccce9181d4660e2455d"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/hub/FileResponse.js",
+      "bytes": 4280,
+      "sha256": "3552856187db8e11f687aafc69ddc570c1edb3283abfcd1addeb8ed1ebc7e073"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/random.js",
+      "bytes": 8727,
+      "sha256": "a78832fdd26f63ac27c855e59dc63da4d44d95034fa1d292d8017921f2e8ad5d"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/cache/FileCache.js",
+      "bytes": 4533,
+      "sha256": "0a529b14c462253b54bebe42e4b2ec2aca5ff9650bad972e9ae796d6cdbb654d"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/hub/constants.js",
+      "bytes": 878,
+      "sha256": "cbe1e49897b7ba806935a124fe9ff810b27eb6fa8b2493db6e7aa30202a5b7e1"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/logger.js",
+      "bytes": 1691,
+      "sha256": "fa27a4945c827ca672c12959a4ad4e3b473ccbcc2f1a7f9fc603e1b03ad7ee21"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/hub/utils.js",
+      "bytes": 8709,
+      "sha256": "bb19afb78cda5c9df3f4b64907501e6ee7a327373d2170d906346e6b9c9ada2c"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/cache/CrossOriginStorageCache.js",
+      "bytes": 9704,
+      "sha256": "ab445ededc1df2299cb3e24feb17b4d56b7665a84f5f081e6f423598291ebaa2"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/cache.js",
+      "bytes": 4046,
+      "sha256": "b7df67ab00d0139e5df8a3501dbaa92dccb8d73a120b6b2a1a262060f77f35e2"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/lru_cache.js",
+      "bytes": 1989,
+      "sha256": "16fec435e1254304fcaef242c8e6c5d0a7ec0b4c3f79a6eff6d3f9ec7b58c952"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/memoize_promise.js",
+      "bytes": 1521,
+      "sha256": "892fc8a77baa754149a1138f66600884426167ee7d56097fd937a6e0d525c804"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/model_registry/get_file_metadata.js",
+      "bytes": 7065,
+      "sha256": "c6ac6e2e1927d3288f4b4d7c0a8b4a3fb0500a78b926078b653fa0ebdb6f5667"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/hub.js",
+      "bytes": 27373,
+      "sha256": "9382b54d91d52397848928fc3165f6ef474d2a88cc8045a6ed9c6630481aade5"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/configs.js",
+      "bytes": 22828,
+      "sha256": "bf5063117b9e22b1f118bc13dfd992dd68f749958743f6d5179369c92de19de7"
+    },
+    {
+      "path": "browser-unavailable:onnx-node",
+      "bytes": 18,
+      "sha256": null
+    },
+    {
+      "path": "node_modules/onnxruntime-web/dist/ort.webgpu.min.mjs",
+      "bytes": 66543,
+      "sha256": "5dd65363be87d182ce0617665489cab4b78359cea9f04d813b2a423c9be651a1"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/backends/utils/cacheWasm.js",
+      "bytes": 4173,
+      "sha256": "5ea1c3e7679866aec2cad76c03d5c6a704bf3e17956bb39053fa72f3e1a6509c"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/backend-impl.js",
+      "bytes": 5339,
+      "sha256": "97dd81b055a06f61120f09468fe59f046a9262b7b87bf5d05bceb085bf4f5558"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/backend.js",
+      "bytes": 184,
+      "sha256": "017ce2ec9dc2021ebc1ef2c4f04e1bc74276c65921b0297e7ed8cc16e640495b"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/version.js",
+      "bytes": 263,
+      "sha256": "71c36bdc106472438d3f6c865c0e7ffd0f957524dceb0750738c451098c5ef13"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/env-impl.js",
+      "bytes": 848,
+      "sha256": "0da4c562a49fe147e19320a64cbb456184eb0e6242b1fe69c65c8368c55f3d97"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/env.js",
+      "bytes": 262,
+      "sha256": "b2bbd3d3b00a95765713c57cd0f5ef73718ae5b8322e07cb47a43e2accb21f15"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/tensor-conversion-impl.js",
+      "bytes": 7852,
+      "sha256": "df6fa3cd1813c2d3e588cc07973cfe5ea2ab8647c957168200caa58e51440161"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/tensor-factory-impl.js",
+      "bytes": 11002,
+      "sha256": "cf5606fe23461e01bff59c2d72ac47d74e652548718f1e5fab07a22b441379b4"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/tensor-impl-type-mapping.js",
+      "bytes": 2706,
+      "sha256": "20bd5ddb858954cf071bace6c7a6628c8e311433798ec172f4c778bebd81d407"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/tensor-utils-impl.js",
+      "bytes": 1920,
+      "sha256": "87d3e07c153616138c2f57846545eea9c47957c714d50c0264696bdc293e6732"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/tensor-impl.js",
+      "bytes": 16091,
+      "sha256": "6a749be63055f9d21069566b1515412484a3a03448ca20427c8f8d29328a2843"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/tensor.js",
+      "bytes": 286,
+      "sha256": "721d24a538de5333057bfc423bc00c3453a1c483f4495c857d0a6f9b8f2d330e"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/trace.js",
+      "bytes": 1891,
+      "sha256": "9b87e6309a1c502b03558aa94b0a65c8ea1e8eb59cb46090f54f6eacd191b841"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/inference-session-impl.js",
+      "bytes": 8703,
+      "sha256": "0446814a392c147b5c38ba242d9911ee54002b5d01a8e19fb4895fb8f8a0cdd3"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/inference-session.js",
+      "bytes": 348,
+      "sha256": "3ad4271a88edb3d242dc1e0e7bbf66510f9a56eff874c433b3b37f900ac007b1"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/tensor-conversion.js",
+      "bytes": 152,
+      "sha256": "8c43ec1d061ab71032a1b28f45d85ef95f8d7bd2d4cd71d059e96d83e3a8f422"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/tensor-factory.js",
+      "bytes": 149,
+      "sha256": "68b9f4f4573f25012ce8a4f73c9a2cee3a28db91de8bbb0a20ddb08bcba33c4b"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/onnx-model.js",
+      "bytes": 145,
+      "sha256": "9e9dc8678be0ea04575a542894508db355a4f9f2155ac7f4c17a697c5f843382"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/onnx-value.js",
+      "bytes": 145,
+      "sha256": "33dc232498753fc9026dfa44c99440cb1a6d29f3e53e1ad2fb8b696705158f06"
+    },
+    {
+      "path": "node_modules/onnxruntime-common/dist/esm/index.js",
+      "bytes": 1036,
+      "sha256": "ad23f6d6ce2c99c449031f24a5181f259516c64a9a67428c98a8539b857729bd"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/backends/onnx.js",
+      "bytes": 16493,
+      "sha256": "b3956d30ca190ca25379c5a1a3e878427571c66a20c8ca4de120448ec207f7e4"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/devices.js",
+      "bytes": 1683,
+      "sha256": "8c5e6aaee364189692e23f3b93cc796c23fe618416308e38268c945cb027f01c"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/dtypes.js",
+      "bytes": 5267,
+      "sha256": "46ada10cc5ef01aaed4604548a2b99ab911b74d1eda04397683e1bb708eb0ca5"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/model-loader.js",
+      "bytes": 4994,
+      "sha256": "c73e995769093d4dd475e9b5b59acb9100e23756e921dcf5c8c41b97dcf35e2e"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/maths.js",
+      "bytes": 37235,
+      "sha256": "1a324f1da9a82fccb5c429b9a207160a7bf57f297298b594e06cb8158c9f285c"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/ops/registry.js",
+      "bytes": 8234,
+      "sha256": "a0757cf7ad873bf40a07c236a5d45033d7d8a6680dad8cf574416b6666dab9fb"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/tensor.js",
+      "bytes": 63430,
+      "sha256": "406925c485691c89a492088efabe476055419121415faa2ae5502acedcd6a461"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/models/session.js",
+      "bytes": 12429,
+      "sha256": "f17cae95a879be9ab8b2ee3897bbfe37582c1442074cae3e373ecbd18725eae4"
+    },
+    {
+      "path": "node_modules/@huggingface/tokenizers/dist/tokenizers.mjs",
+      "bytes": 98937,
+      "sha256": "1c4a848f86156201c033d6cd08c4cf81ae1088552acec3367f31ef086edf5af0"
+    },
+    {
+      "path": "node_modules/@huggingface/jinja/dist/index.js",
+      "bytes": 114817,
+      "sha256": "c8871915dfa68f976c11540c33fc9341c0810ebe29adb7027b8d51f2a8044936"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/model_registry/get_tokenizer_files.js",
+      "bytes": 693,
+      "sha256": "ab2ec7d5352465cd161244f7a4586d83da2bcab5119500c4687195e0c2bc55bc"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/tokenization_utils.js",
+      "bytes": 38569,
+      "sha256": "8a61ccb4da1cc1cf5655d808b19662308bd4770945218286cd9c25928256ecba"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/models/clip/tokenization_clip.js",
+      "bytes": 126,
+      "sha256": "a56f47cfa7d0c3810cd4d27b1316472e961cc97dcf23ce72742e0968ead4bf1c"
+    },
+    {
+      "path": "browser-unavailable:node:stream",
+      "bytes": 34,
+      "sha256": null
+    },
+    {
+      "path": "browser-unavailable:node:stream/promises",
+      "bytes": 34,
+      "sha256": null
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/io.js",
+      "bytes": 1716,
+      "sha256": "c8688e064c043f6af4497d80f8abbd2f709b29a71290bbd0e47966ce7d9d977f"
+    },
+    {
+      "path": "browser-unavailable:sharp",
+      "bytes": 18,
+      "sha256": null
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/image.js",
+      "bytes": 31012,
+      "sha256": "ad67ad4c0dcd2761679ca083a725e961a163e9146b2d3da03d97b1667b12d959"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/utils/constants.js",
+      "bytes": 343,
+      "sha256": "fe14e5b8a29bdc3563c0277ee66f3e11e2f053aa03afc06349402d8d36ca42ff"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/image_processors_utils.js",
+      "bytes": 44683,
+      "sha256": "0d16e8d3e07fbbfc221013a09ffe67fb83190a2288243fcf39a56cc913b1701c"
+    },
+    {
+      "path": "node_modules/@huggingface/transformers/src/models/clip/image_processing_clip.js",
+      "bytes": 189,
+      "sha256": "13c85638a8926c4d19587028b733ebb2ca4f89ded66fcf101784021bcca2bb51"
+    },
+    {
+      "path": "clip-session-entry.mjs",
+      "bytes": 3144,
+      "sha256": "2f1c5543eec3d5c0f7897ac8d34c79b2121b351885e6e0f4e58005fb4e607982"
+    }
+  ]
+}

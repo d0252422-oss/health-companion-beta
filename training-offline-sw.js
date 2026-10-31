@@ -1,7 +1,7 @@
 /* Cache only this version's public application shell. Never cache private/API/auth responses. */
 'use strict';
-const CACHE='health-training-shell-local-01';
-const SHELL=['./','./index.html','./build.json','./scripts/build-version.js','./scripts/manual-sql-config.js','./scripts/core-ux-contract.js','./scripts/local-engine-web.js','./scripts/training-personal-web.js','./scripts/engine-beta-web.js','./scripts/web-view-state.js','./scripts/manual-observation-web.js','./scripts/training-workspace-core.js','./scripts/training-workspace-web.js'];
+const CACHE='health-training-shell-food-photo-v1';
+const SHELL=['./','./index.html','./build.json','./scripts/build-version.js','./scripts/manual-sql-config.js','./scripts/core-ux-contract.js','./scripts/local-engine-web.js','./scripts/training-personal-web.js','./scripts/engine-beta-web.js','./scripts/web-view-state.js','./scripts/manual-observation-web.js','./scripts/training-workspace-core.js','./scripts/training-workspace-web.js','./scripts/food-photo-core.js','./scripts/food-photo-web.js','./scripts/food-photo-worker.js','./scripts/food-photo-catalog.json','./scripts/food-photo-model-manifest.json'];
 const allowed=new Set(SHELL.map(p=>new URL(p,self.registration.scope).pathname));
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('health-training-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));

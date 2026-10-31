@@ -1,0 +1,4 @@
+scripts/food-photo-vendor/* text eol=lf
+tools/food-photo-runtime/* text eol=lf
+scripts/food-photo-model-manifest.json text eol=lf
+tests/food-photo-runtime.test.cjs text eol=lf

@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "health-beta-clip-only-runtime-build",
+  "version": "1.0.0",
+  "description": "Build-only source dependencies; no install scripts or model download. Not the Web app dependency root.",
+  "scripts": {
+    "build": "node build.cjs"
+  },
+  "devDependencies": {
+    "@huggingface/transformers": "4.3.2",
+    "@huggingface/jinja": "0.5.11",
+    "@huggingface/tokenizers": "0.2.0",
+    "onnxruntime-common": "1.30.0",
+    "onnxruntime-web": "1.31.0-dev.20260914-8d85527a0",
+    "esbuild": "0.28.2"
+  }
+}

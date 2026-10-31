@@ -1,0 +1,136 @@
+{
+  "model": {
+    "model": "Xenova/clip-vit-base-patch32",
+    "revision": "6b7c523703ae26e39be4b03774966f8571c7f523",
+    "files": [
+      {
+        "path": "config.json",
+        "bytes": 4524,
+        "sha256": "493ef57ff783e42d1530c91b53469b7fdf8db8a9c1408e86998fcb7899a4f495",
+        "source": "https://huggingface.co/Xenova/clip-vit-base-patch32/resolve/6b7c523703ae26e39be4b03774966f8571c7f523/config.json",
+        "download_or_verify_ms": 418
+      },
+      {
+        "path": "tokenizer.json",
+        "bytes": 2224119,
+        "sha256": "f7f3b7af117d467b58374797691a6438d3e6b9e9cef800dfd5dced7f697a90cd",
+        "source": "https://huggingface.co/Xenova/clip-vit-base-patch32/resolve/6b7c523703ae26e39be4b03774966f8571c7f523/tokenizer.json",
+        "download_or_verify_ms": 401
+      },
+      {
+        "path": "tokenizer_config.json",
+        "bytes": 775,
+        "sha256": "60ba2912bc6344c94bc16bbdec27fa1209409167b6f2fdf3cfe9e65462ea3967",
+        "source": "https://huggingface.co/Xenova/clip-vit-base-patch32/resolve/6b7c523703ae26e39be4b03774966f8571c7f523/tokenizer_config.json",
+        "download_or_verify_ms": 333
+      },
+      {
+        "path": "preprocessor_config.json",
+        "bytes": 520,
+        "sha256": "6f638fb9401a6d6296feff533ee7efe657b787c49f954f82f5906b36ef2a1b1f",
+        "source": "https://huggingface.co/Xenova/clip-vit-base-patch32/resolve/6b7c523703ae26e39be4b03774966f8571c7f523/preprocessor_config.json",
+        "download_or_verify_ms": 290
+      },
+      {
+        "path": "onnx/model_quantized.onnx",
+        "bytes": 153695702,
+        "sha256": "0898a3facfdb27f0a041e57649b4989cfd094e4a0040d6ae75ed69917dfc7328",
+        "source": "https://huggingface.co/Xenova/clip-vit-base-patch32/resolve/6b7c523703ae26e39be4b03774966f8571c7f523/onnx/model_quantized.onnx",
+        "download_or_verify_ms": 6347
+      }
+    ],
+    "total_bytes": 155927057,
+    "total_required_bytes": 155925640,
+    "license": "MIT",
+    "license_metadata_source": "https://huggingface.co/Xenova/clip-vit-base-patch32/blob/6b7c523703ae26e39be4b03774966f8571c7f523/README.md",
+    "original_model": {
+      "id": "openai/clip-vit-base-patch32",
+      "revision": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+      "license": "MIT via OpenAI/CLIP LICENSE; original HF metadata has no license tag"
+    },
+    "original_license": {
+      "url": "https://raw.githubusercontent.com/openai/CLIP/d05afc436d78f1c48dc0dbf8e5980a9d471f35f6/LICENSE",
+      "repository_revision": "d05afc436d78f1c48dc0dbf8e5980a9d471f35f6",
+      "sha256": "987e63b32f6c89ff5160e429458a872ff048e6860b590a3912e938f9da8f14db",
+      "bytes": 1064
+    }
+  },
+  "runtime": {
+    "package": "@huggingface/transformers",
+    "version": "4.3.2",
+    "license": "Apache-2.0",
+    "official_registry": "https://registry.npmjs.org/@huggingface%2Ftransformers/4.3.2",
+    "npm_pin": {
+      "latest": "4.3.2",
+      "next": "4.4.0-next.0",
+      "published": "2026-10-27T18:15:37.302Z",
+      "node": null,
+      "license": "Apache-2.0",
+      "dependencies": {
+        "sharp": "^0.35.4",
+        "onnxruntime-web": "1.31.0-dev.20260914-8d85527a0",
+        "onnxruntime-node": "1.30.0",
+        "@huggingface/jinja": "^0.5.10",
+        "@huggingface/tokenizers": "^0.2.0"
+      },
+      "tarball": "https://registry.npmjs.org/@huggingface/transformers/-/transformers-4.3.2.tgz",
+      "integrity": "sha512-V3+dqf3iWlRYJ9I9GreM3zGQd0lAXnnoPeddmkOQYWAEE4l/+Fi6p7tx/qVUJlKQgLXGim2W76rTOzz+eC0i7g==",
+      "shasum": "142bfe0babf44f07528c3d15a47a2f9bdc7d3f7c"
+    },
+    "lockfile_sha256": "22f5f868c322c3461653c2720800b87cdf06bcb2be39f1cfce5b22bf51d119cf",
+    "onnxruntime_web_version": "1.31.0-dev.20260914-8d85527a0",
+    "onnxruntime_license": "MIT",
+    "warning": "Transformers stable package currently pins a dev prerelease ORT dependency; do not call whole stack stable ORT.",
+    "assets": [
+      {
+        "path": "scripts/food-photo-vendor/transformers-clip-only.mjs",
+        "bytes": 522639,
+        "sha256": "cf175bad12747f10bc3b864cc8b4d944b693b34bc6d74e93bf70a1492e583868",
+        "delivery": "same-origin Pages Worker ESM; custom CLIP-only build, not official dist"
+      },
+      {
+        "path": "onnxruntime-web/dist/ort-wasm-simd-threaded.asyncify.mjs",
+        "bytes": 53057,
+        "sha256": "0966b6105cd936744498aa60df7a22cbd47af3374dbc64a9ab561c08a71e3611",
+        "public_url": "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.0-dev.20260914-8d85527a0/dist/ort-wasm-simd-threaded.asyncify.mjs"
+      },
+      {
+        "path": "onnxruntime-web/dist/ort-wasm-simd-threaded.asyncify.wasm",
+        "bytes": 26861777,
+        "sha256": "49871f5a4409519797e127440868a6d1923339d9185907f301a5b2a1d90af082",
+        "public_url": "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.0-dev.20260914-8d85527a0/dist/ort-wasm-simd-threaded.asyncify.wasm"
+      }
+    ],
+    "total_required_bytes": 27437473,
+    "onnxruntime_repository_revision": "8d85527a010e294a26b274749f74294b2a32cec5",
+    "onnxruntime_license_source": {
+      "url": "https://raw.githubusercontent.com/microsoft/onnxruntime/8d85527a010e294a26b274749f74294b2a32cec5/LICENSE",
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c",
+      "bytes": 1073
+    },
+    "transformers_license_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "browser_standalone_artifact": "scripts/food-photo-vendor/transformers-clip-only.mjs",
+    "custom_build": {
+      "version": "transformers.js-4.3.2-clip-only.v1",
+      "recipe": "tools/food-photo-runtime/build.cjs",
+      "lockfile": "tools/food-photo-runtime/package-lock.json",
+      "lockfile_sha256": "1d4650148a588e7b207f387b796af9441c50c2392a06ad96102e86589cfd82ba",
+      "build_manifest": "tools/food-photo-runtime/build-manifest.json",
+      "source": "official npm @huggingface/transformers@4.3.2 src; same model/revision/q8/preprocessing/tokenization/scoring",
+      "removed": "all-model architecture registry, Auto model registry, pipelines, generation/base model and non-CLIP model implementations",
+      "upstream_source_modified": false,
+      "esbuild": "0.28.2",
+      "source_maps_shipped": false,
+      "external_js_imports": []
+    }
+  },
+  "required_public_asset_total_bytes": 183363113,
+  "scope": "WASM q8 single-thread; does not include source maps, docs, private photos, app worker, optional GPU build, Node ORT binaries",
+  "mobile_acceptance": "NOT_RUN",
+  "quantized_weight_license_restrictions": "Preserve MIT notices; no added usage restriction in conversion metadata; original model intended-use limitations retained as model guidance.",
+  "security_event": {
+    "original_event_classification": "UNVERIFIED",
+    "remediation": "genuine dependency graph reduction; original all-model dist neither shipped nor loaded",
+    "security_exception_used": false
+  }
+}

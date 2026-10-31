@@ -1,0 +1,2503 @@
+{
+  "version": "food-catalog-tw-photo.20261031.v1",
+  "foods": [
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "J0200201"
+      ],
+      "name": "雙髻鯊",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "117",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "27.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "0.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "83",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-05T16:11:49.7931485Z",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "14a90ea359211dbad6242029f429dda2170403c2bef3ccbaa4562551d45c8367",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "USDA",
+        "SR-Legacy-2019-04-01-response-54131f1bb9ac797ea5a7c418f236a5c2156f37547082e5f4af1649f696d5950b",
+        "167782"
+      ],
+      "name": "Abiyuch, raw",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "69.0",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "1.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "17.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "20.0",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [
+        {
+          "label": "cup",
+          "amount": "0.5",
+          "grams": "114.0",
+          "source": "USDA"
+        }
+      ],
+      "provenance": {
+        "source": "USDA",
+        "release": "SR-Legacy-2019-04-01-response-54131f1bb9ac797ea5a7c418f236a5c2156f37547082e5f4af1649f696d5950b",
+        "source_url": "https://api.nal.usda.gov/fdc/v1/food/167782",
+        "retrieved_at": "2026-10-05T16:09:37.3897842Z",
+        "license_id": "CC0-1.0",
+        "raw_sha256": "dcb45c7c1b9a337f4b949753fb24cc6d833dc5cb758540de0670aa6fd91ba8f1",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "OFF",
+        "api-v2-last-modified-1791119555-response-96c493aaffc9cad60f4ff26b55b5cff02ab569f9e0b30f2f9c342513d5eb3f7d",
+        "3017620422003"
+      ],
+      "name": "Nutella",
+      "preparation_state": "AS_SOLD",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "539",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "6.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "30.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "57.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "42.8",
+          "unit": "mg",
+          "qualifier": "APPROXIMATE",
+          "source_modifier": "~"
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "OFF",
+        "release": "api-v2-last-modified-1791119555-response-96c493aaffc9cad60f4ff26b55b5cff02ab569f9e0b30f2f9c342513d5eb3f7d",
+        "source_url": "https://world.openfoodfacts.org/api/v2/product/3017620422003",
+        "retrieved_at": "2026-10-05T16:11:04.1061688Z",
+        "license_id": "ODbL-1.0/DbCL-1.0",
+        "raw_sha256": "c278e279a911717f449febe8587b7644224bb1b90515379181321870009c6496",
+        "transformations": [
+          "EXPLICIT_PER100_UNIT_CONTRACT:{\"carbohydrates\": \"g\", \"energy-kcal\": \"kcal\", \"fat\": \"g\", \"proteins\": \"g\", \"sodium\": \"g\"}",
+          "OFF_NORMALIZED_MODIFIERS_PRESERVED"
+        ]
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "A0550601"
+      ],
+      "name": "白飯",
+      "preparation_state": "COOKED",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "182",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "3.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "41.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "2",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "1cb9458712313f7bcfe89120d3fd0b80ec8a6e0cf98d5137bd00422b38627131",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "R2000101"
+      ],
+      "name": "乾麵條",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "347",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "11.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "1.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "72.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "362",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "df04c2271fdd66e50cff45bf3511a76483805864f7665b547ab685d89beaa260",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "R2000401"
+      ],
+      "name": "通心麵",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "355",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "13.8",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "1.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "72.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "25",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "6b3e4d84a5c533a1ecf59af04a1b5b07b5d284c0170bca9df257149342879c50",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "Q1000101"
+      ],
+      "name": "土司",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "283",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "9.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "6.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "48.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "443",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "c4368019b4ffb60aa9549b19419c57671ff64d5957a0c7a6fda9e6c40dff6cc4",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "R2400201"
+      ],
+      "name": "白饅頭",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "246",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "8.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "1.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "51.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "182",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "7a93c6c89c0008c387194804fef5da18618eea0a2ac694659a6b6b6d5f3914af",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "A0810201"
+      ],
+      "name": "即食燕麥片",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "384",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "11.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "9.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "67.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "3",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "627a1843e7adeb159ef7d61fc32d4c2274aa965ebe9cbf150f6a25934d469fca",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "B0400601"
+      ],
+      "name": "黃肉甘藷",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "115",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "1.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "27.8",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "51",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "d05eb7db0520980da92022cc2bb53e92af2dbe135ad0397110d2b309a508cf94",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "B0700202"
+      ],
+      "name": "馬鈴薯(2022年取樣)",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "68",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "2.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "14.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "2",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "76f55171a20f581be643ae26317a03c956ea68bf2a63e80621110009552156b5",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "K0100101"
+      ],
+      "name": "雞蛋(白殼)",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "139",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "12.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "9.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "1.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "129",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "d8f94c206edbab3985a2338a76c35e7aede235ba31bfa63f4fa471bc42162c07",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "R4700902"
+      ],
+      "name": "傳統豆腐(2022年取樣)",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "93",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "9.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "5.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "1.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "7",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "2ce83ee3981d86464e3183991d4c8e07299fd183a9e142a67c8ae358678e873b",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "R4701201"
+      ],
+      "name": "嫩豆腐",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "51",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "4.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "3.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "1.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "32",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "530f9bacc4db7bf9e3a78d334dfc1573efc753e89fdb39ffdae3b989022bee96",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "I0402402"
+      ],
+      "name": "去皮清肉(肉雞)",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "117",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "23.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "1.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "0.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "33",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "3acf0dc0ae1db92f296c0d1fb8eabdcc214cdeffaa5745535af7b72931780f6b",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "I0304101"
+      ],
+      "name": "豬大里肌",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "212",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "19.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "14.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "0.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "40",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "bdd09638ccc7cec58ec8afe3e1aa6b39424c379fc7ecf6564b9b4b1747202b01",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "I0110104"
+      ],
+      "name": "牛嫩肩里肌火鍋片",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "188",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "20.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "11.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "1.8",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "56",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "5e7c56654ea90568e3fa54c6da7335a5f921f481f8f00f04f3f8caeb9b20b4f0",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "J0414701"
+      ],
+      "name": "鯖魚(生)",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "417",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "14.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "39.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "0.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "56",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "3af018108864c3ef61ca87de6fb84af60c86ee32e6690e0d070457797b94db46",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "J0414810"
+      ],
+      "name": "鯖魚(蒸)",
+      "preparation_state": "COOKED",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "392",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "14.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "36.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "0.7",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "52",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "c0a7a0346280c25e232af36a3b3610a302a42eb09ba2daa60c34386cbc70ca0c",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "J0414806"
+      ],
+      "name": "鯖魚(烤,180度,10分)",
+      "preparation_state": "COOKED",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "373",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "20.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "31.8",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "0.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "82",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "60107158c4ba6bdc407f1d60261cdd572b84f921c33e6d11cfec7e1c6a295cf1",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "J2200501"
+      ],
+      "name": "草蝦仁",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "44",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "9.7",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "0.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "431",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "61344ccfedcf4e2628a829e8f4f0282d4359ac54fbf56c9bb5b15495f3d4e8bb",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "L01021"
+      ],
+      "name": "全脂鮮乳平均值",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "63",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "3.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "3.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "4.8",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "37",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "c1096bb7c47b01ccbc3f4697883153bde68a11c2a5b28867add68686c40e114a",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "L0106101"
+      ],
+      "name": "低脂鮮乳",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "43",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "3.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "1.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "5.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "28",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "fa98b86eaf6aed0ed24cc683e13acd1018352cac6de589581360a889ee63362d",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "H1150201"
+      ],
+      "name": "豆漿(無糖)",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "32",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "3.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "1.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "0.7",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "2",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "deea74ca449e3264306ffbd895c0881125f2862d04bb7bc5009e2813b0c66c95",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E5800402"
+      ],
+      "name": "青花菜(2021年取樣)",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "33",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "3.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "6.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "13",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "20212fb4a70e0e5d302efca957b4e6f1e361bcc30e96b3ad57ce1e32b592cbad",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E5000101"
+      ],
+      "name": "菠菜",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "14",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "2.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "2.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "43",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "8666c2eeb001014d29db8fd125bf70283afec58608051f16d0a6f4b1ef52b3ab",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E3200602"
+      ],
+      "name": "小白菜(土植)(3月取樣)",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "11",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "1.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "2.4",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "51",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "f905cd8e31db9403090e5a5641ffe2bcda11d23c548c78a8388a8569f6fe840d",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E30001"
+      ],
+      "name": "甘藍平均值",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "21",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "1.3",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "4.8",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "11",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "17db55d6c67376c8a3f41e1891ac1bab1031acd074a54089221ff9e9e9abf2bb",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E02001"
+      ],
+      "name": "胡蘿蔔平均值",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "34",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "1.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "8.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "89",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "20149fd0307852d88e9d802a14105fb08ade621dd3155c8867501fd7eab6f33a",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E7400101"
+      ],
+      "name": "牛番茄",
+      "preparation_state": "RAW",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "17",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "0.7",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "4.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "2",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "0e9af276b0ddc711265ae8f7f00e28acc1f46b5e730b4370acb916827e05b153",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E1100101"
+      ],
+      "name": "熟桂竹筍",
+      "preparation_state": "COOKED",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "18",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "2.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "3.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "68",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "e97039dfc3c667d9ba4db978700799467e0a8636a39a2dc966c2ec1be5772972",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "B0900201"
+      ],
+      "name": "熟蓮藕",
+      "preparation_state": "COOKED",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "47",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "1.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "11.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "29",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "931fc9319d54ef16b5e2f6fd6d148c7127cb3429e985776a446d0b0c344ebe34",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "D08001"
+      ],
+      "name": "北蕉平均值",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "82",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "1.5",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "22.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "0",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "beb5350ab0126316dbc680399e498d6ae9b6ca4ef939247754486f53eea5fcf2",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "D32004"
+      ],
+      "name": "蘋果平均值(混色)",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "49",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "0.2",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "13.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "1",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "6d02ddc950a7fdf15bed420b8071be389aefe73175b51874c591e734211937ab",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "D3600101"
+      ],
+      "name": "柳橙",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "40",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "0.8",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "11.0",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "5",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "03a9075cdb89003045c8d9363b3c3db8efcaa29f69a682faa9df3cb12945eb03",
+        "transformations": []
+      }
+    },
+    {
+      "schema_version": "food.reference.v0.2",
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "D02001"
+      ],
+      "name": "木瓜平均值",
+      "preparation_state": "UNKNOWN",
+      "reference_kind": "FOOD_REFERENCE",
+      "basis": {
+        "amount": "100",
+        "unit": "g"
+      },
+      "nutrients": {
+        "energy_kcal": {
+          "value": "36",
+          "unit": "kcal",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "protein_g": {
+          "value": "0.6",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "fat_g": {
+          "value": "0.1",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "carbs_g": {
+          "value": "9.9",
+          "unit": "g",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        },
+        "sodium_mg": {
+          "value": "3",
+          "unit": "mg",
+          "qualifier": "SOURCE_REPORTED",
+          "source_modifier": null
+        }
+      },
+      "portions": [],
+      "provenance": {
+        "source": "TFDA",
+        "release": "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "source_url": "https://data.fda.gov.tw/data/opendata/export/20/csv",
+        "retrieved_at": "2026-10-31T03:02:05.148931+00:00",
+        "license_id": "TW-OGDL-1.0",
+        "raw_sha256": "974954f88c87bc8ea6726e303a1d3639ebb896ab74ac907a8977fecdc28d65c2",
+        "transformations": []
+      }
+    }
+  ],
+  "aliases": [
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "J0200201"
+      ],
+      "label": "雙髻鯊（生）",
+      "locale": "zh-TW",
+      "evidence": "SOURCE_NAME_AND_PINNED_PREPARATION:14a90ea359211dbad6242029f429dda2170403c2bef3ccbaa4562551d45c8367"
+    },
+    {
+      "source_key": [
+        "USDA",
+        "SR-Legacy-2019-04-01-response-54131f1bb9ac797ea5a7c418f236a5c2156f37547082e5f4af1649f696d5950b",
+        "167782"
+      ],
+      "label": "Abiyuch",
+      "locale": "en",
+      "evidence": "SOURCE_NAME_AND_PINNED_PREPARATION:dcb45c7c1b9a337f4b949753fb24cc6d833dc5cb758540de0670aa6fd91ba8f1"
+    },
+    {
+      "source_key": [
+        "OFF",
+        "api-v2-last-modified-1791119555-response-96c493aaffc9cad60f4ff26b55b5cff02ab569f9e0b30f2f9c342513d5eb3f7d",
+        "3017620422003"
+      ],
+      "label": "Nutella",
+      "locale": "en",
+      "evidence": "SOURCE_NAME_AND_PINNED_PREPARATION:c278e279a911717f449febe8587b7644224bb1b90515379181321870009c6496"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "B0400601"
+      ],
+      "locale": "zh-TW",
+      "label": "甘薯,番薯,甜薯,地瓜,田薯,土薯",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "B0700202"
+      ],
+      "locale": "zh-TW",
+      "label": "洋芋,洋薯,洋山芋,荷蘭薯,日本番薯,塊茄",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "R4700902"
+      ],
+      "locale": "zh-TW",
+      "label": "板豆腐",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "I0402402"
+      ],
+      "locale": "zh-TW",
+      "label": "去皮雞胸肉",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "I0304101"
+      ],
+      "locale": "zh-TW",
+      "label": "背脊肉,里肌肉",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "L01021"
+      ],
+      "locale": "zh-TW",
+      "label": "牛乳,牛奶",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "L0106101"
+      ],
+      "locale": "zh-TW",
+      "label": "牛乳,牛奶",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "H1150201"
+      ],
+      "locale": "zh-TW",
+      "label": "豆奶",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E5800402"
+      ],
+      "locale": "zh-TW",
+      "label": "(青花菜非綠色花椰菜)青(綠)花菜,美國花菜,青花苔,花(青)菜苔,菜苔,花菜苞",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E5000101"
+      ],
+      "locale": "zh-TW",
+      "label": "菠菱菜,赤根菜,飛龍菜,角菜,波斯草,波斯菜,波菱菜",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E3200602"
+      ],
+      "locale": "zh-TW",
+      "label": "土白菜,青菜,白菜,不結球白菜,水白菜",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E30001"
+      ],
+      "locale": "zh-TW",
+      "label": "高麗菜,包菜,洋白菜,玻璃菜,玉菜,捲心菜,球葉甘藍,結球甘藍,蕃芥藍",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E02001"
+      ],
+      "locale": "zh-TW",
+      "label": "紅蘿蔔,紅菜頭,黃蘿蔔,丁香蘿蔔,人參,金筍",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E7400101"
+      ],
+      "locale": "zh-TW",
+      "label": "柑(甘)仔蜜,草(番,西紅,六月)柿,臭柿仔,小金瓜,洋柿(茄)子,紅茄,毛臘果",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "E1100101"
+      ],
+      "locale": "zh-TW",
+      "label": "桂竹仔筍,石竹仔筍,簍竹,筀竹筍",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "B0900201"
+      ],
+      "locale": "zh-TW",
+      "label": "蓮根,藕,芙蕖,荷花藕",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "D08001"
+      ],
+      "locale": "zh-TW",
+      "label": "香蕉,芎蕉,弓蕉,甘蕉",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "D32004"
+      ],
+      "locale": "zh-TW",
+      "label": "柰,林檎",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "D3600101"
+      ],
+      "locale": "zh-TW",
+      "label": "甜橙,柳橙,柳丁,印子柑,廣柑",
+      "evidence": "TFDA source alias field"
+    },
+    {
+      "source_key": [
+        "TFDA",
+        "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+        "D02001"
+      ],
+      "locale": "zh-TW",
+      "label": "番木瓜,番瓜",
+      "evidence": "TFDA source alias field"
+    }
+  ],
+  "notice": "TFDA 33 added references; preparation UNKNOWN stays unknown. No default grams.",
+  "visualMapping": {
+    "version": "food-photo-visual-labels.v1",
+    "evidence": "Manually curated broad candidate labels; user must choose source and preparation",
+    "labels": {
+      "white rice": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "A0550601"
+        ]
+      ],
+      "noodles": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "R2000101"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "R2000401"
+        ]
+      ],
+      "bread": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "Q1000101"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "R2400201"
+        ]
+      ],
+      "oatmeal": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "A0810201"
+        ]
+      ],
+      "egg": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "K0100101"
+        ]
+      ],
+      "tofu": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "R4700902"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "R4701201"
+        ]
+      ],
+      "chicken": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "I0402402"
+        ]
+      ],
+      "pork": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "I0304101"
+        ]
+      ],
+      "beef": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "I0110104"
+        ]
+      ],
+      "fish": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "J0414701"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "J0414810"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "J0414806"
+        ]
+      ],
+      "shrimp": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "J2200501"
+        ]
+      ],
+      "milk": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "L01021"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "L0106101"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "H1150201"
+        ]
+      ],
+      "broccoli": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "E5800402"
+        ]
+      ],
+      "leafy vegetables": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "E5000101"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "E3200602"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "E30001"
+        ]
+      ],
+      "carrot": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "E02001"
+        ]
+      ],
+      "tomato": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "E7400101"
+        ]
+      ],
+      "banana": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "D08001"
+        ]
+      ],
+      "apple": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "D32004"
+        ]
+      ],
+      "orange": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "D3600101"
+        ]
+      ],
+      "papaya": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "D02001"
+        ]
+      ],
+      "potato": [
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "B0400601"
+        ],
+        [
+          "TFDA",
+          "export-sha256-9aeb0cdbefad3f82be9b4089f044c8d0bc087a6b7453ba96832d126ff6ea3aa1",
+          "B0700202"
+        ]
+      ]
+    }
+  }
+}

@@ -47,7 +47,8 @@ function verify(root, repository = REPOSITORY) {
   }
   new vm.Script(read('training-offline-sw.js'), {filename:'training-offline-sw.js'});
   assets.push('training-offline-sw.js');
-  assert.equal(assets.length, 14);
+  assets.push(...["scripts/food-photo-worker.js", "scripts/food-photo-catalog.json", "scripts/food-photo-model-manifest.json", "scripts/food-photo-vendor/CLIP-LICENSE-MIT.txt", "scripts/food-photo-vendor/ort-wasm-simd-threaded.asyncify.mjs", "scripts/food-photo-vendor/TRANSFORMERS-LICENSE.txt", "scripts/food-photo-vendor/TOKENIZERS-LICENSE.txt", "scripts/food-photo-vendor/JINJA-LICENSE.txt", "scripts/food-photo-vendor/ORT-LICENSE.txt", "scripts/food-photo-vendor/transformers-clip-only.mjs"]);
+  assert.equal(assets.length, 26);
   for (const [, source] of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) new vm.Script(source);
   return { build_id: build, build: 'PASS_STATIC', secret_scan: 'PASS_SCOPED_PATTERNS',
     assets: assets.map(name => ({ path: name, sha256: crypto.createHash('sha256').update(fs.readFileSync(path.join(root, name))).digest('hex') })) };
