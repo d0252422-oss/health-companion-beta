@@ -114,7 +114,7 @@
       "version": "transformers.js-4.3.2-clip-only.v1",
       "recipe": "tools/food-photo-runtime/build.cjs",
       "lockfile": "tools/food-photo-runtime/package-lock.json",
-      "lockfile_sha256": "09c8d7bc49e1d1c189fb6e131769de20b55d7cf7007ac69e1a50a55180862903",
+      "lockfile_sha256": "1d4650148a588e7b207f387b796af9441c50c2392a06ad96102e86589cfd82ba",
       "build_manifest": "tools/food-photo-runtime/build-manifest.json",
       "source": "official npm @huggingface/transformers@4.3.2 src; same model/revision/q8/preprocessing/tokenization/scoring",
       "removed": "all-model architecture registry, Auto model registry, pipelines, generation/base model and non-CLIP model implementations",
