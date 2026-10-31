@@ -24,14 +24,14 @@
   const bitmap=await createImageBitmap(draft.photo.blob);guard(g);const canvas=document.createElement('canvas');canvas.width=bitmap.width;canvas.height=bitmap.height;const cx=canvas.getContext('2d');cx.drawImage(bitmap,0,0);bitmap.close();
   const region=draft.region||'FULL',x=region==='RIGHT'?Math.floor(canvas.width/2):0,y=region==='BOTTOM'?Math.floor(canvas.height/2):0,w=['LEFT','RIGHT'].includes(region)?Math.floor(canvas.width/2):canvas.width,h=['TOP','BOTTOM'].includes(region)?Math.floor(canvas.height/2):canvas.height;const pixels=cx.getImageData(x,y,w,h).data;
   worker=new Worker('scripts/food-photo-worker.js?v='+env.build,{type:'module'});
-  const timer=setTimeout(()=>{if(g!==generation)return;worker?.terminate();worker=null;message('模型載入逾時，照片與草稿仍在，可搜尋食物繼續記錄。');},180000);
+  const timer=setTimeout(()=>{if(g!==generation)return;stopModel();message('模型載入逾時，照片與草稿仍在，可搜尋食物繼續記錄。');},180000);
   worker.onmessage=async event=>{if(g!==generation)return;const r=event.data;
    if(r.type==='progress'){message('下載公開模型：'+(Number.isFinite(r.progress)?Math.floor(r.progress)+'%':'準備中')+'；照片不會傳給模型網站。');return;}
-   clearTimeout(timer);if(r.type==='error'){message('此瀏覽器暫時無法辨識，照片仍在，請搜尋食物繼續。');return;}
+   clearTimeout(timer);if(r.type==='error'){stopModel();message('此瀏覽器暫時無法辨識，照片仍在，請搜尋食物繼續。');return;}
    if(r.type!=='result'||!Array.isArray(r.results)||r.results.length>50)return;
    draft.predictions=r.results.filter(x=>typeof x.label==='string'&&x.label.length<=100&&Number.isFinite(x.score)).slice(0,6);draft.model=r.model;await persist();render();message('候選不代表照片已被確認，也可能不是食物；請自行選擇來源與克數。');
   };
-  worker.onerror=()=>{if(g===generation){clearTimeout(timer);message('辨識失敗，照片與草稿已保留，仍可手動記錄。');}};
+  worker.onerror=()=>{if(g===generation){clearTimeout(timer);stopModel();message('辨識失敗，照片與草稿已保留，仍可手動記錄。');}};
   worker.postMessage({pixels:pixels.buffer,width:w,height:h},[pixels.buffer]);
  }
  function add(food){return changed(()=>draft.items.push({itemId:id(),source_key:food.source_key,name:food.name,preparation:food.preparation_state,grams:'',estimated:false,lower:'',upper:'',calculation:null,snapshotId:null,feedbackId:id()}));}

@@ -18,9 +18,9 @@ test('additive database upgrade preserves training accounts and isolates photo B
  const db=await repo.db;assert.deepEqual(await new Promise(ok=>{const r=db.transaction('accounts').objectStore('accounts').get('original');r.onsuccess=()=>ok(r.result);}),{draft:'EXISTING_TRAINING'});
  await repo.write(a,{...draft,photo:null});assert.equal((await repo.read(a)).photo,null);db.close();
 });
-function fixture(){
+function fixture(initialDraft=null){
  const dom=new JSDOM('<div id="nutrition-screen"></div>',{url:'https://fixture.invalid/',runScripts:'outside-only'}),w=dom.window;
- let stored=null,owner='A',epoch=1,requestCount=0,refreshes=0,manual=0;
+ let stored=initialDraft,owner='A',epoch=1,requestCount=0,refreshes=0,manual=0;
  const food=JSON.parse(fs.readFileSync('scripts/food-photo-catalog.json','utf8')).foods.find(f=>f.source_key[2]==='A0550601');
  w.structuredClone=structuredClone;w.crypto.randomUUID=()=>require('node:crypto').randomUUID();w.URL.createObjectURL=()=> 'blob:isolated';w.URL.revokeObjectURL=()=>{};
  w.FoodPhotoCore={...C,Drafts:class{async read(){return structuredClone(stored);}async write(_owner,d){stored=structuredClone(d);}}};w.HealthEngineUI=require('../scripts/engine-beta-web.js');
@@ -52,4 +52,17 @@ test('complete photo payload bypasses stale manual label-mode DOM and is stable 
  const source=fs.readFileSync('scripts/local-engine-web.js','utf8'),start=source.indexOf('function localMealMutationPayload('),end=source.indexOf('\n',start);const code=source.slice(start,end);
  const ctx={Object,globalThis:{},localMealRevisionPayload:p=>({...p,revision:p.revision??2}),document:{getElementById(){throw Error('SHOULD_NOT_READ_MANUAL_FORM');}}};vm.createContext(ctx);vm.runInContext(code,ctx);
  const payload={photoId:'photo',foodItems:[{snapshotId:'snapshot'}],labelMode:false,clientRequestId:'fixed'};const a=ctx.localMealMutationPayload(payload),b=ctx.localMealMutationPayload(payload);assert.equal(a.labelMode,false);assert.equal(JSON.stringify(a),JSON.stringify(b));
+});
+
+
+test('terminal model failure stops late progress without losing photo draft or manual entry',async()=>{
+ const initial={date:'2026-10-31',time:'12:00',mealType:'午餐',items:[],photo:{blob:new Blob(['TEST photo'])},photoId:'fixture-photo',predictions:[],recent:[]};
+ const f=fixture(initial),workers=[];f.w.createImageBitmap=async()=>({width:1,height:1,close(){}});
+ f.w.HTMLCanvasElement.prototype.getContext=()=>({drawImage(){},getImageData(){return {data:new Uint8ClampedArray(4)};}});
+ f.w.Worker=class{constructor(){workers.push(this);}postMessage(){}terminate(){this.terminated=true;}};
+ await f.click('恢復本機草稿');await f.click('提供照片候選');const first=workers[0];
+ await first.onmessage({data:{type:'error',code:'MODEL_UNAVAILABLE'}});const error=f.w.document.querySelector('#food-photo-status').textContent;
+ await first.onmessage({data:{type:'progress',progress:100}});assert.equal(first.terminated,true);assert.equal(f.w.document.querySelector('#food-photo-status').textContent,error);assert.match(error,/暫時無法辨識/);assert.ok(f.w.document.querySelector('#food-photo-content img'));
+ await f.click('提供照片候選');const second=workers[1];second.onerror();const secondError=f.w.document.querySelector('#food-photo-status').textContent;await second.onmessage({data:{type:'progress',progress:100}});assert.equal(second.terminated,true);assert.equal(f.w.document.querySelector('#food-photo-status').textContent,secondError);
+ await f.click('使用手動飲食表單');assert.ok(f.stored.photo);assert.equal(f.writes,0);f.dom.window.close();
 });
