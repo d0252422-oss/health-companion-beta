@@ -2,9 +2,9 @@
 <html lang="zh-Hant">
  <head><meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="health-companion-build" content="20261018-beta-training-workspace-01">
+  <meta name="health-companion-build" content="20261102-beta-training-selection-hotfix-01">
   <title>健康陪跑 Health Companion</title>
-  <script src="scripts/build-version.js?v=20261018-beta-training-workspace-01"></script>
+  <script src="scripts/build-version.js?v=20261102-beta-training-selection-hotfix-01"></script>
   <script id="lucide-sdk" async src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <style>
@@ -750,15 +750,15 @@
    </div>
   </div>
   <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="scripts/manual-sql-config.js?v=20261018-beta-training-workspace-01"></script>
-  <script src="scripts/core-ux-contract.js?v=20261018-beta-training-workspace-01"></script>
-  <script src="scripts/local-engine-web.js?v=20261018-beta-training-workspace-01"></script>
-  <script src="scripts/training-personal-web.js?v=20261018-beta-training-workspace-01"></script>
-  <script src="scripts/engine-beta-web.js?v=20261018-beta-training-workspace-01"></script>
-  <script src="scripts/web-view-state.js?v=20261018-beta-training-workspace-01"></script>
-  <script src="scripts/manual-observation-web.js?v=20261018-beta-training-workspace-01"></script>
-  <script src="scripts/training-workspace-core.js?v=20261018-beta-training-workspace-01"></script>
-  <script src="scripts/training-workspace-web.js?v=20261018-beta-training-workspace-01"></script>
+  <script src="scripts/manual-sql-config.js?v=20261102-beta-training-selection-hotfix-01"></script>
+  <script src="scripts/core-ux-contract.js?v=20261102-beta-training-selection-hotfix-01"></script>
+  <script src="scripts/local-engine-web.js?v=20261102-beta-training-selection-hotfix-01"></script>
+  <script src="scripts/training-personal-web.js?v=20261102-beta-training-selection-hotfix-01"></script>
+  <script src="scripts/engine-beta-web.js?v=20261102-beta-training-selection-hotfix-01"></script>
+  <script src="scripts/web-view-state.js?v=20261102-beta-training-selection-hotfix-01"></script>
+  <script src="scripts/manual-observation-web.js?v=20261102-beta-training-selection-hotfix-01"></script>
+  <script src="scripts/training-workspace-core.js?v=20261102-beta-training-selection-hotfix-01"></script>
+  <script src="scripts/training-workspace-web.js?v=20261102-beta-training-selection-hotfix-01"></script>
   <script>
     const APP_STARTED_AT=performance.now();
     const PERF_DEBUG=new URLSearchParams(location.search).get("debugPerf")==="1";
@@ -1204,7 +1204,7 @@ async function sessionPost(action,payload={}){
     function exerciseBodyPartName(exercise){return exercise?.bodyPartName||exerciseCategoryLabel(exerciseMuscleGroup(exercise));}
     function activeExerciseOptions(){return (Array.isArray(exerciseDatabase)?exerciseDatabase:[]).filter(exercise=>exercise.active!==false);}
     function activeExerciseBodyParts(){return HealthCoreUX.exerciseCatalogView(exerciseDatabase,exerciseBodyParts,{scope:'active'}).groups;}
-    function renderExerciseOptions(bodyPartId){const part=document.getElementById('muscle-group-select');if(bodyPartId!==undefined)part.value=bodyPartId;return bindExerciseLookup('exercise-select',{partId:'muscle-group-select',searchId:'exercise-search',statusId:'exercise-search-status'});}
+    function renderExerciseOptions(bodyPartId){const part=document.getElementById('muscle-group-select');if(bodyPartId!==undefined)part.value=bodyPartId;return bindExerciseLookup('exercise-select',{partId:'muscle-group-select',searchId:'exercise-search',statusId:'exercise-search-status',preserveFilteredSelection:false});}
     function renderMuscleGroupOptions(){return renderExerciseOptions();}
     function exerciseCacheKey(){return `healthCompanionExercises:${EXERCISE_CACHE_SCHEMA}:${dashboardProviderNamespace()}:${currentUser?.userId||"anonymous"}`;}
     function readExerciseCache(){try{const cached=JSON.parse(sessionStorage.getItem(exerciseCacheKey())||"null");return cached?.userId===currentUser?.userId&&Array.isArray(cached.entries)&&Date.now()-cached.cachedAt<EXERCISE_CACHE_TTL?cached.entries:null;}catch{return null;}}
