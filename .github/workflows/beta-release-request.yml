@@ -1,0 +1,31 @@
+name: Beta Release Request
+on:
+  workflow_run:
+    workflows: ['Beta Web CI']
+    types: [completed]
+permissions:
+  contents: read
+concurrency:
+  group: beta-release-request
+  cancel-in-progress: false
+jobs:
+  accept:
+    if: github.repository == 'd0252422-oss/health-companion-beta' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+      checks: read
+      statuses: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
+        with:
+          script: |
+            const { handle } = require('./scripts/release-request.cjs');
+            await handle({ github, context, core });
