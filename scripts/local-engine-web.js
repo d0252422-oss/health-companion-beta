@@ -467,7 +467,7 @@ function bindExerciseLookup(selectId,options={}){
   select.innerHTML=view.groups.map(g=>`<optgroup label="${escapeHtml(g.displayName)}">${g.records.map(e=>`<option value="${escapeHtml(e.exerciseId)}">${escapeHtml(e.exerciseName)}${e.archived?'（已封存）':''}</option>`).join('')}</optgroup>`).join('');
   if(wanted&&![...select.options].some(o=>o.value===wanted)){
    const keep=eligible.find(e=>e.exerciseId===wanted),historical=config.includeId===wanted;
-   if(keep||historical)select.insertAdjacentHTML('beforeend',`<option value="${escapeHtml(wanted)}">${escapeHtml(keep?.exerciseName||config.fallbackName||'歷史動作')}（目前選取／歷史紀錄）</option>`);
+   if(keep&&config.preserveFilteredSelection!==false||historical)select.insertAdjacentHTML('beforeend',`<option value="${escapeHtml(wanted)}">${escapeHtml(keep?.exerciseName||config.fallbackName||'歷史動作')}（目前選取／歷史紀錄）</option>`);
   }
   if(wanted&&[...select.options].some(o=>o.value===wanted))select.value=wanted;
   if(!select.options.length)select.innerHTML='<option value="">尚無符合動作</option>';

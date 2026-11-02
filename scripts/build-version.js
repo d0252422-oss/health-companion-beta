@@ -1,7 +1,7 @@
 (function (root) {
   'use strict';
 
-  const BUILD_ID = '20261018-beta-training-workspace-01';
+  const BUILD_ID = '20261102-beta-training-selection-hotfix-01';
   const RECOVERY_PREFIX = 'healthCompanionBuildRecovery:';
 
   function recoveryUrl(href, liveBuildId) {

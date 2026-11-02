@@ -10,7 +10,12 @@
  const nextOrder=draft=>Math.max(0,...draft.exercises.flatMap(e=>e.sets.map(s=>s.order||0)))+1;
  function same(w){w.active();if(workspace!==w||env.context().owner!==w.identity.owner||env.context().provider!==w.identity.provider){reset();throw Error('IDENTITY_CHANGED');}}
  function message(text){const target=el('training-workspace-status');if(target)target.textContent=text;}
- function explain(error){const code=error.code||error.message;return ({STALE_REVISION:'其他裝置已修改這筆資料。請先核對伺服器版本。',UNRESOLVED_CONFLICT:'有尚未解決的版本衝突，已停止補傳。',IDENTITY_CHANGED:'帳號已變更，已停止這次操作。',MISSING_SET_VALUES:'請填寫本組所需數值；未知值會保留空白。',LOCAL_SAVE_FAILED:'本機儲存失敗，請保留此頁與輸入內容。',INVALID_WORKOUT_SET:'請檢查數值範圍與整數次數。',EXERCISE_ARCHIVED:'動作已封存，請先恢復動作再開始新的訓練。'})[code]||'尚未同步，輸入已保留。'+(code||'網路暫時不可用');}
+ function explain(error){const code=error.code||error.message;
+  if(error.trainingAddStage){
+   const known={SELECT_EXERCISE:'請選擇訓練動作。',EXERCISE_CATALOG_UNAVAILABLE:'目前沒有可加入的動作，請重新讀取動作清單。',EXERCISE_SELECTION_STALE:'動作清單已更新，請重新選擇訓練動作。',EXERCISE_SELECTION_CHANGED:'選擇已變更，尚未加入；請確認目前動作後再按新增。',EXERCISE_ARCHIVED:'此動作已封存，請選擇其他動作。',DUPLICATE_EXERCISE_ID:'此動作已在本次訓練，可直接新增下一組。',SESSION_CLOSED:'目前沒有進行中的訓練，請先開始訓練。',WORKOUT_SET_BOUND_EXCEEDED:'本次訓練已達動作數量上限。',IDENTITY_CHANGED:'帳號已變更，已停止新增動作。'};
+   return known[code]||({WORKSPACE:'無法準備本機工作區，尚未加入動作；請保留目前頁面。',HISTORY:'動作歷史讀取失敗，尚未加入；請稍後重試。',LOCAL_SAVE:'動作尚未保存到本機，請保留此頁與輸入後重試。',RENDER:'動作已保存到本機，但畫面更新失敗；請重新讀取訓練，不必重複新增。'})[error.trainingAddStage]||'新增動作未完成（TRAINING_ADD_FAILED），請保留目前頁面。';
+  }
+  return ({STALE_REVISION:'其他裝置已修改這筆資料。請先核對伺服器版本。',UNRESOLVED_CONFLICT:'有尚未解決的版本衝突，已停止補傳。',IDENTITY_CHANGED:'帳號已變更，已停止這次操作。',MISSING_SET_VALUES:'請填寫本組所需數值；未知值會保留空白。',LOCAL_SAVE_FAILED:'本機儲存失敗，請保留此頁與輸入內容。',INVALID_WORKOUT_SET:'請檢查數值範圍與整數次數。',EXERCISE_ARCHIVED:'動作已封存，請先恢復動作再開始新的訓練。'})[code]||'尚未同步，輸入已保留。'+(code||'網路暫時不可用');}
  async function safe(fn){try{await fn();}catch(e){message(explain(e));env?.notify?.(explain(e));}}
  async function ensure(){
   if(!env.enabled())throw Error('TRAINING_PROVIDER_REQUIRED');
@@ -76,13 +81,34 @@
   await w.enqueue('startTrainingSession',{sessionId:draft.id,date:draft.date,startTime:draft.startTime,timezone:draft.timezone,plan:await planFromDraft(draft),source},s=>{if(s.draft?.status==='ACTIVE')throw Error('ACTIVE_DRAFT_EXISTS');s.draft=draft;});same(w);
   await render();env.setView('workout_session');void safe(sync);
  }
+ function selectedExercise(state,selectedId){
+  const select=el('exercise-select');
+  if(select?.value!==selectedId)throw Error('EXERCISE_SELECTION_CHANGED');
+  if(!selectedId||select.disabled||!select.selectedOptions[0]||select.selectedOptions[0].hidden)throw Error('SELECT_EXERCISE');
+  // This is the same owner-scoped catalog that rendered the picker, not an older offline snapshot.
+  const catalog=env.exercises();if(!Array.isArray(catalog)||!catalog.length)throw Error('EXERCISE_CATALOG_UNAVAILABLE');
+  const current=catalog.find(e=>e.exerciseId===selectedId);if(!current)throw Error('EXERCISE_SELECTION_STALE');
+  if(current.archived===true||current.active===false)throw Error('EXERCISE_ARCHIVED');
+  const cached=state.catalog.find(e=>e.exerciseId===selectedId),pending=state.queue.some(q=>q.action==='saveExerciseSettings'&&q.payload.exerciseId===selectedId);
+  return {...clone(current),...(pending&&cached?{settings:clone(cached.settings),revision:cached.revision}:{})};
+ }
  async function addExercise(){
-  const w=await ensure(),state=await w.read(),exercise=state.catalog.find(e=>e.exerciseId===el('exercise-select').value);if(!exercise)throw Error('SELECT_EXERCISE');
-  await loadExerciseHistory(w,exercise.exerciseId);same(w);
-  await w.change(s=>{if(!s.draft||s.draft.status!=='ACTIVE')throw Error('SESSION_CLOSED');if(s.draft.exercises.some(e=>e.exerciseId===exercise.exerciseId))throw Error('DUPLICATE_EXERCISE_ID');
-   if(s.draft.exercises.length>=50)throw Error('WORKOUT_SET_BOUND_EXCEEDED');
-   const set=C.newSet();set.order=nextOrder(s.draft);s.draft.exercises.push({exerciseId:exercise.exerciseId,exerciseName:exercise.exerciseName,exerciseType:exercise.settings?.exerciseType||'WEIGHT_REPS',settings:clone(exercise.settings||{}),sets:[set]});});
-  await render();
+  let stage='SELECTION';const status=el('training-workspace-status');if(status){delete status.dataset.failureStage;delete status.dataset.failureCode;}
+  try{
+   const selectedId=el('exercise-select')?.value;if(!selectedId)throw Error('SELECT_EXERCISE');
+   stage='WORKSPACE';const w=await ensure(),state=await w.read();same(w);stage='SELECTION';const exercise=selectedExercise(state,selectedId);
+   stage='HISTORY';await loadExerciseHistory(w,exercise.exerciseId);same(w);
+   stage='LOCAL_SAVE';await w.change(s=>{const latest=selectedExercise(s,selectedId);
+    if(!s.draft||s.draft.status!=='ACTIVE')throw Error('SESSION_CLOSED');if(s.draft.exercises.some(e=>e.exerciseId===latest.exerciseId))throw Error('DUPLICATE_EXERCISE_ID');
+    if(s.draft.exercises.length>=50)throw Error('WORKOUT_SET_BOUND_EXCEEDED');
+    const index=s.catalog.findIndex(e=>e.exerciseId===latest.exerciseId);if(index<0)s.catalog.push(clone(latest));else s.catalog[index]=clone(latest);
+    const set=C.newSet();set.order=nextOrder(s.draft);s.draft.exercises.push({exerciseId:latest.exerciseId,exerciseName:latest.exerciseName,exerciseType:latest.settings?.exerciseType||'WEIGHT_REPS',settings:clone(latest.settings||{}),sets:[set]});});
+   stage='RENDER';await render();
+  }catch(error){
+   const failure=error&&typeof error==='object'?error:Error('TRAINING_ADD_FAILED');failure.trainingAddStage=stage;
+   if(status){status.dataset.failureStage=stage;status.dataset.failureCode=['SELECT_EXERCISE','EXERCISE_CATALOG_UNAVAILABLE','EXERCISE_SELECTION_STALE','EXERCISE_SELECTION_CHANGED','EXERCISE_ARCHIVED','DUPLICATE_EXERCISE_ID','SESSION_CLOSED','WORKOUT_SET_BOUND_EXCEEDED','IDENTITY_CHANGED'].includes(failure.code||failure.message)?failure.code||failure.message:'TRAINING_ADD_FAILED';}
+   throw failure;
+  }
  }
  async function editLocalSet(exerciseId,setId,patch){
   const w=await ensure();await w.change(s=>{const e=s.draft?.exercises.find(x=>x.exerciseId===exerciseId),set=e?.sets.find(x=>x.id===setId);if(!set)throw Error('SET_NOT_FOUND');Object.assign(set.values,patch);});
@@ -280,7 +306,7 @@
   el('training-overview').prepend(toolbar);const sessionStatus=node('p');sessionStatus.id='training-session-sync';el('workout-session').prepend(sessionStatus);
   // These replace the old whole-session submit; they never double-write completed sets.
   el('start-workout').onclick=()=>safe(async()=>{const w=await ensure();if(!(await w.read()).catalog.length)await refresh();const date=el('training-start-date').value||env.today();await start({name:'我的訓練',exercises:[]},null,date);});
-  el('resume-workout').onclick=()=>safe(resume);el('add-exercise').onclick=()=>safe(addExercise);el('finish-workout').onclick=()=>safe(finish);
+  el('resume-workout').onclick=()=>safe(resume);el('add-exercise').onclick=async()=>{const control=el('add-exercise');if(control.disabled)return;control.disabled=true;try{await safe(addExercise);}finally{control.disabled=false;}};el('finish-workout').onclick=()=>safe(finish);
   modernHandlers=Object.fromEntries(['start-workout','resume-workout','add-exercise','finish-workout'].map(key=>[key,el(key).onclick]));
   const startDate=node('input');startDate.id='training-start-date';startDate.type='date';startDate.className='form-input';startDate.value=env.today();startDate.max=env.today();startDate.setAttribute('aria-label','開始或補登訓練日期');toolbar.prepend(startDate,node('p','訓練日期於開始時固定；跨午夜仍歸屬本次日期。','record-date-note'));
   let favoritesOnly=false;el('add-exercise').after(button('動作備註／器材設定',editSettings),button('常用／全部動作',async()=>{favoritesOnly=!favoritesOnly;const w=await ensure(),state=await w.read(),select=el('exercise-select');for(const option of select.options)option.hidden=favoritesOnly&&!state.catalog.find(e=>e.exerciseId===option.value)?.settings?.favorite;const first=[...select.options].find(o=>!o.hidden);select.value=first?.value||'';}));
