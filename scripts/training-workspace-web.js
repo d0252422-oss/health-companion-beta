@@ -66,7 +66,7 @@
   const w=await ensure();let state=await w.read();same(w);if(state.draft?.status==='ACTIVE'){env.setView('workout_session');message('已恢復尚未結束的訓練；請先結束它，再開始下一次。');return;}
   if(!copied)for(const e of plan.exercises)if(e.sets.some(s=>s.mode==='LAST'))await loadExerciseHistory(w,e.exerciseId);
   state=await w.read();same(w);
-  const catalog=state.catalog.length?state.catalog:env.exercises(),now=new Date().toISOString();
+  const catalog=currentCatalog(state),now=new Date().toISOString();
   const draft=copied||{schema:C.VERSION,id:id(),revision:1,date,timezone:'Asia/Taipei',startTime:now,status:'ACTIVE',name:plan.name,snapshot:{plan:clone(plan),source},exercises:[]};
   if(!copied)for(const e of plan.exercises){
    const exercise=catalog.find(x=>x.exerciseId===e.exerciseId);if(!exercise||exercise.archived)throw Error('EXERCISE_ARCHIVED');
@@ -80,6 +80,10 @@
   let order=0;for(const e of draft.exercises)for(const set of e.sets)set.order=++order;
   await w.enqueue('startTrainingSession',{sessionId:draft.id,date:draft.date,startTime:draft.startTime,timezone:draft.timezone,plan:await planFromDraft(draft),source},s=>{if(s.draft?.status==='ACTIVE')throw Error('ACTIVE_DRAFT_EXISTS');s.draft=draft;});same(w);
   await render();env.setView('workout_session');void safe(sync);
+ }
+ function currentCatalog(state){
+  const active=Array.isArray(env.exercises())?env.exercises():[];
+  return active.map(current=>{const cached=state.catalog.find(e=>e.exerciseId===current.exerciseId),pending=state.queue.some(q=>q.action==='saveExerciseSettings'&&q.payload.exerciseId===current.exerciseId);return {...clone(current),...(pending&&cached?{settings:clone(cached.settings),revision:cached.revision}:{})};});
  }
  function selectedExercise(state,selectedId){
   const select=el('exercise-select');
@@ -100,10 +104,10 @@
    stage='HISTORY';await loadExerciseHistory(w,exercise.exerciseId);same(w);
    stage='LOCAL_SAVE';await w.change(s=>{const latest=selectedExercise(s,selectedId);
     if(!s.draft||s.draft.status!=='ACTIVE')throw Error('SESSION_CLOSED');if(s.draft.exercises.some(e=>e.exerciseId===latest.exerciseId))throw Error('DUPLICATE_EXERCISE_ID');
-    if(s.draft.exercises.length>=50)throw Error('WORKOUT_SET_BOUND_EXCEEDED');
+    if(s.draft.exercises.length>=50||nextOrder(s.draft)>200)throw Error('WORKOUT_SET_BOUND_EXCEEDED');
     const index=s.catalog.findIndex(e=>e.exerciseId===latest.exerciseId);if(index<0)s.catalog.push(clone(latest));else s.catalog[index]=clone(latest);
     const set=C.newSet();set.order=nextOrder(s.draft);s.draft.exercises.push({exerciseId:latest.exerciseId,exerciseName:latest.exerciseName,exerciseType:latest.settings?.exerciseType||'WEIGHT_REPS',settings:clone(latest.settings||{}),sets:[set]});});
-   stage='RENDER';await render();
+   stage='RENDER';await render();root.HealthUXR1?.exerciseAdded();
   }catch(error){
    const failure=error&&typeof error==='object'?error:Error('TRAINING_ADD_FAILED');failure.trainingAddStage=stage;
    if(status){status.dataset.failureStage=stage;status.dataset.failureCode=['SELECT_EXERCISE','EXERCISE_CATALOG_UNAVAILABLE','EXERCISE_SELECTION_STALE','EXERCISE_SELECTION_CHANGED','EXERCISE_ARCHIVED','DUPLICATE_EXERCISE_ID','SESSION_CLOSED','WORKOUT_SET_BOUND_EXCEEDED','IDENTITY_CHANGED'].includes(failure.code||failure.message)?failure.code||failure.message:'TRAINING_ADD_FAILED';}
@@ -124,6 +128,7 @@
   await w.enqueue('upsertTrainingSet',payload,s=>{
    if(s.draft.id!==d.id||s.draft.revision!==d.revision)throw Error('STALE_REVISION');
    const target=s.draft.exercises.find(x=>x.exerciseId===exerciseId).sets.find(x=>x.id===setId);
+   if(payload.completed&&!target.completed){const seconds=s.draft.restSeconds||90;s.draft.restTimer={deadline:Date.now()+seconds*1000,setId:target.id};}
    target.completed=payload.completed;target.removed=remove;target.revision++;target.lastSentValues=clone(values);s.draft.revision++;
   });await render();void safe(sync);
  }
@@ -142,9 +147,11 @@
   }return area;
  }
  function performance(v){const chunks=[];for(const key of ['weight','reps','distanceMeters','durationSeconds'])if(v[key]!=null)chunks.push(String(v[key])+' '+({weight:'kg',reps:'次',distanceMeters:'m',durationSeconds:'秒'})[key]);return chunks.join(' × ')||'待輸入';}
+ async function prefillLast(exerciseId,setId){const w=await ensure();await loadExerciseHistory(w,exerciseId);same(w);await w.change(s=>{const e=s.draft?.exercises.find(x=>x.exerciseId===exerciseId),set=e?.sets.find(x=>x.id===setId);if(!set||set.completed||set.removed)throw Error('COMPLETED_SETS_REQUIRE_EDIT');const prior=C.lastValues(s.history.filter(r=>r.sessionId!==s.draft.id),exerciseId,e.sets.indexOf(set)+1,e.exerciseType);if(!prior?.values)throw Error(prior?.ambiguous?'AMBIGUOUS_SAME_DAY_HISTORY':'NO_COMPLETED_HISTORY');set.values=clone(prior.values);set.prefillSource=clone(prior.source);});await render();}
+ async function addSet(exerciseId,copyPrevious=false){const w=await ensure();await w.change(s=>{const e=s.draft?.exercises.find(x=>x.exerciseId===exerciseId);if(!e)throw Error('SET_NOT_FOUND');if(nextOrder(s.draft)>200||s.draft.exercises.reduce((n,x)=>n+x.sets.length,0)>=200)throw Error('WORKOUT_SET_BOUND_EXCEEDED');const previous=copyPrevious?e.sets.filter(x=>!x.removed).at(-1):null,next=C.newSet(previous?.values||{},previous?{date:s.draft.date,setId:previous.id,revision:previous.revision,kind:'TODAY_PREFILL'}:null);next.order=nextOrder(s.draft);e.sets.push(next);});await render();el('exercise-session-list').querySelector('[data-exercise-id="'+CSS.escape(exerciseId)+'"] .training-live-set:last-of-type input')?.focus();}
  async function renderHistory(exercise,details,history){
   details.replaceChildren(node('summary','上次與近期逐組紀錄'));
-  const rows=C.completedHistory(history,exercise.exerciseId).slice(0,12);
+  const rows=C.completedHistory(history.filter(r=>r.sessionId!==view?.draft?.id),exercise.exerciseId).slice(0,12);
   if(!rows.length){details.append(node('p',view?.historyCoverage?.[exercise.exerciseId]?'尚無已確認的完成紀錄；預填值保持空白。':'此動作歷史尚未讀取，請連線後重新讀取；預填值保持空白。'));return;}
   let shown='';
   for(const row of rows){
@@ -177,7 +184,7 @@
  async function render(){
   const w=workspace;if(!w)return;let state=await w.read();same(w);
   if(state.draft?.exercises.some(e=>e.sets.some(set=>!set.order))){await w.change(s=>{const sets=s.draft.exercises.flatMap(e=>e.sets),used=new Set(sets.map(set=>set.order).filter(Boolean));for(const set of sets)if(!set.order){const sent=s.queue.find(q=>q.action==='upsertTrainingSet'&&q.payload.recordId===set.id)?.payload||s.history.find(r=>r.recordId===set.id);let order=sent?.setOrder||sets.indexOf(set)+1;while(used.has(order))order++;set.order=order;used.add(order);}});state=await w.read();same(w);}
-  view=state;env.setSession(state.draft);
+  view=state;env.setSession(state.draft);root.HealthUXR1?.trainingChanged(state);
   const target=el('exercise-session-list');if(!target)return;
   const active=document.activeElement,focusId=active?.closest?.('[data-set-id]')?.dataset.setId,focusField=active?.dataset.field;target.replaceChildren();
   const draft=state.draft;
@@ -191,22 +198,22 @@
     const history=node('details');void renderHistory(exercise,history,state.history);block.append(history);
     for(const [i,set] of exercise.sets.entries()){
      if(set.removed)continue;const row=node('section',undefined,'training-live-set');row.dataset.setId=set.id;
-     row.append(node('strong','第 '+(i+1)+' 組 · '+(set.completed?'已完成':'未完成／預填')));
+     const heading=node('div',undefined,'ux-set-heading'),previous=C.lastValues(state.history.filter(r=>r.sessionId!==draft.id),exercise.exerciseId,i+1,exercise.exerciseType);heading.append(node('strong',String(i+1)),node('span','上次：'+(previous?.values?performance(previous.values)+' · '+previous.source.date:previous?.ambiguous?'同日來源待確認':state.historyCoverage?.[exercise.exerciseId]?'尚無符合紀錄':'尚未讀取；可連線讀取或手動輸入'),'ux-set-reference'));row.append(heading,node('p',set.completed?'本組已完成':'本組未完成／預填','record-date-note'));
      if(set.prefillSource)row.append(node('p','輸入輔助來源：'+set.prefillSource.date+' · 不代表已完成','record-date-note'));
      if(set.prefillNotice)row.append(node('p',set.prefillNotice,'record-date-note'));
-     row.append(inputs(set.values,exercise.exerciseType,patch=>editLocalSet(exercise.exerciseId,set.id,patch)));
+     const typed=inputs(set.values,exercise.exerciseType,patch=>editLocalSet(exercise.exerciseId,set.id,patch)),advanced=node('details',undefined,'ux-compact-detail');advanced.append(node('summary','備註、暖身與重量微調'));const notes=typed.lastElementChild;advanced.append(notes);row.append(typed);
      if(exercise.exerciseType==='WEIGHT_REPS'){
       const increment=Number(exercise.settings.weightIncrement)||2.5;
-      row.append(button('− '+increment+' kg',()=>adjustWeight(exercise.exerciseId,set.id,-increment)),
+      advanced.append(button('− '+increment+' kg',()=>adjustWeight(exercise.exerciseId,set.id,-increment)),
        button('＋ '+increment+' kg',()=>adjustWeight(exercise.exerciseId,set.id,increment)));
      }
-     const warm=node('label','暖身組 '),checkbox=node('input');checkbox.type='checkbox';checkbox.checked=set.values.warmup===true;checkbox.onchange=()=>safe(()=>editLocalSet(exercise.exerciseId,set.id,{warmup:checkbox.checked}));warm.append(checkbox);row.append(warm);
+     const warm=node('label','暖身組 '),checkbox=node('input');checkbox.type='checkbox';checkbox.checked=set.values.warmup===true;checkbox.onchange=()=>safe(()=>editLocalSet(exercise.exerciseId,set.id,{warmup:checkbox.checked}));warm.append(checkbox);advanced.append(warm);row.append(advanced);
      const actions=node('div',undefined,'training-row-actions');actions.append(button(set.completed?'儲存本組修改':'完成本組',()=>saveSet(exercise.exerciseId,set.id),true));
      if(set.completed)actions.append(button('撤銷完成',()=>saveSet(exercise.exerciseId,set.id,{undo:true})));
-     actions.append(button('刪除誤建組',()=>saveSet(exercise.exerciseId,set.id,{remove:true})));row.append(actions);block.append(row);
+     else actions.append(button('沿用上次',()=>prefillLast(exercise.exerciseId,set.id)));
+     actions.append(button('刪除誤建組',()=>{if(root.confirm('刪除此組？已完成的組會依原合約撤銷，不影響其他組。'))return saveSet(exercise.exerciseId,set.id,{remove:true});}));row.append(actions);block.append(row);
     }
-    block.append(button('＋ 下一組',async()=>{await w.change(s=>{const e=s.draft.exercises.find(x=>x.exerciseId===exercise.exerciseId);if(s.draft.exercises.reduce((n,x)=>n+x.sets.length,0)>=200)throw Error('WORKOUT_SET_BOUND_EXCEEDED');
-     const previous=e.sets.filter(x=>!x.removed).at(-1),next=C.newSet(previous?.values||{},previous?{date:s.draft.date,setId:previous.id,kind:'TODAY_PREFILL'}:null);next.order=nextOrder(s.draft);if(next.order>200)throw Error('WORKOUT_SET_BOUND_EXCEEDED');e.sets.push(next);});await render();target.querySelector('[data-exercise-id="'+CSS.escape(exercise.exerciseId)+'"] .training-live-set:last-of-type input')?.focus();}));
+    const addActions=node('div',undefined,'ux-actions');addActions.append(button('＋ 新增一組',()=>addSet(exercise.exerciseId)),button('複製上一組',()=>addSet(exercise.exerciseId,true)));block.append(addActions);
     target.append(block);
    }
    if(!draft.exercises.length)target.append(node('p','搜尋並加入動作，就可以逐組紀錄。'));
@@ -238,15 +245,15 @@
   const w=await ensure(),state=await w.read(),target=el('training-routine-editor');same(w);target.replaceChildren();target.hidden=false;
   const name=node('input'),rows=node('div'),entries=[];name.className='form-input';name.placeholder='課表名稱';name.setAttribute('aria-label','課表名稱');name.value=routine?.name||'';
   target.append(node('h3',routine?'編輯課表':'新增課表'),node('p','課表只決定預填；每一組仍須實際按完成。'),name,rows);
-  for(const row of routine?.exercises||[])entries.push(routineFields(rows,row,state.catalog));
-  target.append(button('＋ 規劃動作',()=>{entries.push(routineFields(rows,null,state.catalog));}),button('取消',()=>{target.hidden=true;target.replaceChildren();}),button('儲存課表',async()=>{
+  const catalog=currentCatalog(state);for(const row of routine?.exercises||[])entries.push(routineFields(rows,row,catalog));
+  target.append(button('＋ 規劃動作',()=>{entries.push(routineFields(rows,null,catalog));}),button('取消',()=>{target.hidden=true;target.replaceChildren();}),button('儲存課表',async()=>{
    if(!name.value.trim())throw Error('INVALID_TRAINING_TEXT');const plan={name:name.value.trim(),exercises:entries.filter(e=>e.area.isConnected).map(e=>e.read())},routineId=routine?.id||id(),revision=routine?.revision||0;
    await w.enqueue('saveTrainingRoutine',{routineId,revision,plan},s=>{const index=s.routines.findIndex(r=>r.id===routineId),item={...plan,id:routineId,revision:revision+1,archived:false};if(index<0)s.routines.push(item);else s.routines[index]=item;});
    target.hidden=true;target.replaceChildren();await render();void safe(sync);
   },true));name.focus();
  }
  async function editSettings(){
-  const w=await ensure(),state=await w.read(),exercise=state.catalog.find(x=>x.exerciseId===el('exercise-select').value);if(!exercise)throw Error('SELECT_EXERCISE');
+  const w=await ensure(),state=await w.read(),exercise=selectedExercise(state,el('exercise-select').value);
   const target=showSettingsPanel();target.replaceChildren();
   const select=node('select');select.className='form-input';select.setAttribute('aria-label','動作類型');for(const [v,t] of Object.entries(labels)){const option=node('option',t);option.value=v;select.append(option);}select.value=exercise.settings?.exerciseType||'WEIGHT_REPS';
   const favorite=node('input');favorite.type='checkbox';favorite.checked=exercise.settings?.favorite===true;const fav=node('label','常用動作 ');fav.append(favorite);
@@ -254,7 +261,7 @@
   target.prepend(node('h3',exercise.exerciseName+' · 個人設定'),node('p','類型變更只套用下一次加入的動作，不改寫既有訓練欄位。'),select,fav);
   target.append(button('取消',()=>{target.hidden=true;target.replaceChildren();}),button('儲存設定',async()=>{
    const settings={exerciseType:select.value,favorite:favorite.checked,notes:fields.notes.value,equipment:fields.equipment.value,weightIncrement:Number(fields.weightIncrement.value)};
-   await w.enqueue('saveExerciseSettings',{exerciseId:exercise.exerciseId,revision:exercise.revision,settings},s=>{const e=s.catalog.find(x=>x.exerciseId===exercise.exerciseId);e.settings=settings;e.revision++;});
+   await w.enqueue('saveExerciseSettings',{exerciseId:exercise.exerciseId,revision:exercise.revision,settings},s=>{let e=s.catalog.find(x=>x.exerciseId===exercise.exerciseId);if(!e){e=clone(exercise);s.catalog.push(e);}e.settings=settings;e.revision++;});
    target.hidden=true;await render();void safe(sync);
   },true));
  }
@@ -271,7 +278,7 @@
   const w=await ensure(),state=await w.read();let source=state.lastSession;
   if(!source){const latest=C.completedHistory(state.history,state.history[0]?.exerciseId);const all=state.history,dates=[...new Set(all.map(r=>r.date))].sort().reverse();if(!dates.length)throw Error('NO_COMPLETED_HISTORY');
    const sessions=[...new Set(all.filter(r=>r.date===dates[0]).map(r=>r.sessionId))];if(sessions.length!==1)throw Error('AMBIGUOUS_SAME_DAY_HISTORY');
-   const records=all.filter(r=>r.sessionId===sessions[0]);source={id:sessions[0],date:dates[0],timezone:'Asia/Taipei',exercises:[]};
+   let records=all.filter(r=>r.sessionId===sessions[0]&&!r.deleted&&r.completed!==false);if(navigator.onLine!==false){const full=await env.request('getTrainingExerciseHistory',{sessionId:sessions[0]});same(w);if(full.hasMore)throw Error('READ_BOUND_EXCEEDED');records=full.records.filter(r=>!r.deleted&&r.completed!==false);}else if(state.historyHasMore)throw Error('READ_BOUND_EXCEEDED');source={id:sessions[0],date:dates[0],timezone:'Asia/Taipei',exercises:[]};
    for(const r of records){let e=source.exercises.find(e=>e.exerciseId===r.exerciseId);if(!e){e={exerciseId:r.exerciseId,exerciseName:r.exerciseName,exerciseType:r.exerciseType||'WEIGHT_REPS',settings:{},sets:[]};source.exercises.push(e);}e.sets.push({id:r.recordId,values:C.measurements(r,e.exerciseType,false)});}
   }
   const copy=C.copySession(source,el('training-start-date')?.value||env.today());await start(await planFromDraft(copy),{kind:'COPY',sessionId:source.id,date:source.date},copy.date,copy);
@@ -309,10 +316,10 @@
   el('resume-workout').onclick=()=>safe(resume);el('add-exercise').onclick=async()=>{const control=el('add-exercise');if(control.disabled)return;control.disabled=true;try{await safe(addExercise);}finally{control.disabled=false;}};el('finish-workout').onclick=()=>safe(finish);
   modernHandlers=Object.fromEntries(['start-workout','resume-workout','add-exercise','finish-workout'].map(key=>[key,el(key).onclick]));
   const startDate=node('input');startDate.id='training-start-date';startDate.type='date';startDate.className='form-input';startDate.value=env.today();startDate.max=env.today();startDate.setAttribute('aria-label','開始或補登訓練日期');toolbar.prepend(startDate,node('p','訓練日期於開始時固定；跨午夜仍歸屬本次日期。','record-date-note'));
-  let favoritesOnly=false;el('add-exercise').after(button('動作備註／器材設定',editSettings),button('常用／全部動作',async()=>{favoritesOnly=!favoritesOnly;const w=await ensure(),state=await w.read(),select=el('exercise-select');for(const option of select.options)option.hidden=favoritesOnly&&!state.catalog.find(e=>e.exerciseId===option.value)?.settings?.favorite;const first=[...select.options].find(o=>!o.hidden);select.value=first?.value||'';}));
+  let favoritesOnly=false;el('add-exercise').after(button('動作備註／器材設定',editSettings),button('常用／全部動作',async()=>{favoritesOnly=!favoritesOnly;const w=await ensure(),state=await w.read(),select=el('exercise-select'),catalog=currentCatalog(state);for(const option of select.options)option.hidden=favoritesOnly&&!catalog.find(e=>e.exerciseId===option.value)?.settings?.favorite;const first=[...select.options].find(o=>!o.hidden);select.value=first?.value||'';}));
   addEventListener('online',()=>safe(async()=>{if(workspace)await sync();}));addEventListener('offline',()=>message('已離線；草稿與待同步請求保存在此帳號的本機儲存。'));
   const observer=new MutationObserver(()=>{if(el('training-session-sync'))el('training-session-sync').textContent=el('training-workspace-status')?.textContent||'';});observer.observe(status,{childList:true,characterData:true,subtree:true});
   if('serviceWorker' in navigator)navigator.serviceWorker.register('./training-offline-sw.js').catch(()=>message('離線頁面快取未就緒；本機草稿仍會保存。'));
  }
- root.HealthWorkout={mount,reset,resume,refresh,recoverOffline,useLegacyDraft,start,sync,render,editRoutine,editSettings,editRecord,saveSet,copyPrevious,get workspace(){return workspace;}};
+ root.HealthWorkout={mount,reset,resume,refresh,recoverOffline,useLegacyDraft,start,sync,render,editRoutine,editSettings,editRecord,saveSet,copyPrevious,prefillLast,addSet,get workspace(){return workspace;}};
 })(globalThis);
