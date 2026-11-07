@@ -21,7 +21,7 @@ function scan(name, text) {
 }
 function verify(root, repository = REPOSITORY) {
   assert.equal(repository, REPOSITORY, 'Beta repository only');
-  const files = cp.execFileSync('git', ['-C', root, 'ls-files', '-z']).toString().split('\0').filter(Boolean);
+  const files = cp.execFileSync('git', ['-C', root, 'ls-files', '--cached', '--others', '--exclude-standard', '-z']).toString().split('\0').filter(Boolean);
   for (const name of files) scan(name, fs.readFileSync(path.join(root, name), 'utf8'));
   const read = name => fs.readFileSync(path.join(root, name), 'utf8');
   assert.ok(fs.existsSync(path.join(root, '.nojekyll')));
@@ -47,7 +47,7 @@ function verify(root, repository = REPOSITORY) {
   }
   new vm.Script(read('training-offline-sw.js'), {filename:'training-offline-sw.js'});
   assets.push('training-offline-sw.js');
-  assert.equal(assets.length, 14);
+  assert.ok(html.includes('scripts/ux-r1.css'));assets.push('scripts/ux-r1.css');assert.equal(assets.length, 17);
   for (const [, source] of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)) new vm.Script(source);
   return { build_id: build, build: 'PASS_STATIC', secret_scan: 'PASS_SCOPED_PATTERNS',
     assets: assets.map(name => ({ path: name, sha256: crypto.createHash('sha256').update(fs.readFileSync(path.join(root, name))).digest('hex') })) };

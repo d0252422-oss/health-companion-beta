@@ -18,7 +18,7 @@ const goalView=g=>{
 let serial=0,tab='pr',catalog=[],goals=[],lastPR=null,mounted=false;
 const byId=id=>document.getElementById(id);
 const currentGuard=()=>{const user=currentUser,epoch=localSessionEpoch,n=++serial;return ()=>user===currentUser&&epoch===localSessionEpoch&&n===serial;};
-function reset(){serial++;catalog=[];goals=[];lastPR=null;if(mounted){byId('training-personal-content').replaceChildren();byId('training-personal-evidence').replaceChildren();byId('training-goal-form').hidden=true;byId('training-personal-panel').hidden=true;}}
+function reset(){serial++;catalog=[];goals=[];lastPR=null;if(mounted){byId('training-personal-content').replaceChildren();byId('training-personal-evidence').replaceChildren();const form=byId('training-goal-form');for(const k of ['request','pending','unresolved','goalId','revision'])delete form.dataset[k];form.reset();lockGoal(false);form.hidden=true;byId('training-personal-panel').hidden=true;}}
 function evidenceButton(r,label='查看原始訓練組'){return `<button type="button" class="secondary-button" data-pr-record="${esc(r.recordId)}" data-pr-revision="${esc(r.revision)}">${esc(label)}</button>`;}
 function recordCard(r,metric){
  const volume=metric==='MAX_SET_VOLUME',label=volume?'最大訓練量':'最大重量';
@@ -70,7 +70,8 @@ async function load(){
  }catch(error){if(!current())return;target.dataset.state='error';target.textContent='訓練資料讀取失敗：'+(typeof readableError==='function'?readableError(error):error.message);const retry=document.createElement('button');retry.type='button';retry.textContent='重新讀取';retry.onclick=load;target.append(retry);}
 }
 function open(tabName){tab=tabName;byId('training-personal-panel').hidden=false;byId('training-personal-title').textContent=tab==='pr'?'個人最佳':'我的目標';byId('training-pr-controls').hidden=tab!=='pr';byId('training-goals-filter-field').hidden=tab!=='goals';byId('training-goal-form').hidden=true;load();}
-function editor(g){const form=byId('training-goal-form');form.reset();form.dataset.goalId=g?.goalId||'';form.dataset.revision=g?.revision||'';delete form.dataset.request;delete form.dataset.pending;
+function lockGoal(locked){for(const id of ['goal-exercise','goal-part','goal-search','goal-type','goal-load','goal-unit','goal-reps','goal-start','goal-end'])byId(id).disabled=locked||(id==='goal-type'&&Boolean(byId('training-goal-form').dataset.goalId));}
+function editor(g){const form=byId('training-goal-form');if(form.dataset.unresolved==='true'){form.hidden=false;byId('goal-form-status').textContent='上一筆目標儲存結果待確認，請先以相同內容重試。';return;}form.reset();lockGoal(false);form.dataset.goalId=g?.goalId||'';form.dataset.revision=g?.revision||'';delete form.dataset.request;delete form.dataset.pending;
  byId('goal-part').value='';byId('goal-search').value='';
  bindExerciseLookup('goal-exercise',{partId:'goal-part',searchId:'goal-search',statusId:'goal-status',getEntries:()=>catalog,includeId:g?.exerciseId,selectedId:g?.exerciseId,fallbackName:g?.exerciseId});
  byId('goal-type').innerHTML=goalTypeOptions(g);byId('goal-type').value=g?goalType(g):'MAX_WEIGHT';byId('goal-type').disabled=!!g;byId('goal-form-status').textContent='';
@@ -80,9 +81,10 @@ function editor(g){const form=byId('training-goal-form');form.reset();form.datas
 async function saveGoal(event){event.preventDefault();const form=event.currentTarget;if(!form.reportValidity())return;
  const end=byId('goal-end'),start=byId('goal-start');end.setCustomValidity(end.value&&end.value<start.value?'截止日期不可早於開始日期':'');if(!form.reportValidity())return;
  const values={goalType:byId('goal-type').value,operation:form.dataset.goalId?'edit':'create',exerciseId:byId('goal-exercise').value,targetLoad:Number(byId('goal-load').value),targetUnit:byId('goal-unit').value,targetReps:byId('goal-type').value==='MAX_WEIGHT'?null:Number(byId('goal-reps').value),startDate:start.value,endDate:end.value||null,...(form.dataset.goalId?{goalId:form.dataset.goalId,revision:form.dataset.revision}:{comparisonVersion:'training-entered-load-v1'})};
- const key=JSON.stringify(values);if(form.dataset.pending!==key){form.dataset.pending=key;form.dataset.request=crypto.randomUUID();}
- const current=currentGuard();byId('goal-save').disabled=true;
- try{await localEngineRequest('manageTrainingGoal',{...values,clientRequestId:form.dataset.request});if(!current())return;form.hidden=true;await load();}catch(e){if(current())byId('goal-form-status').textContent=typeof readableError==='function'?readableError(e):e.message;}finally{byId('goal-save').disabled=false;}
+ if(byId('goal-save').disabled)return;
+ if(form.dataset.unresolved!=='true'){form.dataset.pending=JSON.stringify(values);form.dataset.request=crypto.randomUUID();}
+ const immutable=JSON.parse(form.dataset.pending),current=currentGuard();byId('goal-save').disabled=true;lockGoal(true);byId('goal-form-status').textContent='正在儲存…';
+ try{await localEngineRequest('manageTrainingGoal',{...immutable,clientRequestId:form.dataset.request});if(!current())return;delete form.dataset.unresolved;delete form.dataset.pending;delete form.dataset.request;lockGoal(false);form.hidden=true;await load();}catch(e){if(current()){const code=e.code||e.message,definitive=/^(?:VALIDATION_ERROR|INVALID_|STALE_REVISION|GOAL_NOT_FOUND|EXERCISE_NOT_FOUND|PERMISSION_DENIED|FORBIDDEN)/.test(code);if(definitive){delete form.dataset.pending;delete form.dataset.request;delete form.dataset.unresolved;lockGoal(false);}else{form.dataset.unresolved='true';lockGoal(true);}byId('goal-form-status').textContent=definitive?(typeof readableError==='function'?readableError(e):'目標未儲存，請修正資料。'):'儲存結果待確認，內容已保留；重試會使用相同請求與原始內容。';}}finally{if(current())byId('goal-save').disabled=false;}
 }
 async function showEvidence(button){const current=currentGuard(),target=byId('training-personal-evidence');target.textContent='正在核對原始組…';
  try{const {record:r}=await localEngineRequest('getTrainingSetEvidence',{recordId:button.dataset.prRecord,revision:button.dataset.prRevision});if(!current())return;

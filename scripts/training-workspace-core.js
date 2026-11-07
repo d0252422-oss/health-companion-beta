@@ -19,7 +19,7 @@
   function newSet(values={},source=null){return {id:uid(),revision:0,completed:false,removed:false,values:clone(values),prefillSource:source};}
   function copySession(source,date,now=new Date().toISOString()){
     return {schema:VERSION,id:uid(),revision:1,date,timezone:source.timezone||'Asia/Taipei',startTime:now,endTime:null,status:'ACTIVE',snapshot:clone(source.snapshot||null),
-      exercises:source.exercises.map(e=>({...clone(e),sets:e.sets.filter(s=>!s.removed).map(s=>newSet(s.values,{date:source.date,sessionId:source.id,setId:s.id,kind:'COPY'}))}))};
+      exercises:source.exercises.map(e=>({...clone(e),sets:e.sets.filter(s=>!s.removed).map(s=>newSet(s.values,{date:source.date,sessionId:source.id,setId:s.id,revision:s.revision,kind:'COPY'}))}))};
   }
   function completedHistory(records,exerciseId){
     return records.filter(r=>r.exerciseId===exerciseId&&!r.deleted&&r.completed!==false&&r.status!=='PLANNED')

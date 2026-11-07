@@ -18,6 +18,11 @@ function harness({transport=false}={}){
 }
 const catalog=[{exerciseId:'bench',exerciseName:'Bench'}];
 const pr={range:{startDate:null,endDate:'2026-10-09'},groups:[],excluded:[]};
+test('UX G1 a lost goal ACK retries the immutable original request after fields change',async()=>{
+ const h=harness();h.element('open-training-goals').onclick();await h.finish(0,catalog);await h.finish(1,{goals:[]});await h.element('training-personal-content').onclick({target:{closest:()=>({id:'training-goal-new',dataset:{}})}});
+ for(const [id,value] of [['goal-exercise','bench'],['goal-type','MAX_WEIGHT'],['goal-load','60'],['goal-unit','kg'],['goal-start','2026-10-09']])h.element(id).value=value;
+ const form=h.element('training-goal-form'),first=form.onsubmit({preventDefault(){},currentTarget:form});await h.flush();const original=h.calls[2].payload;h.calls[2].reject(Error('WRITE_STATUS_UNKNOWN'));await first;h.element('goal-load').value='70';const retry=form.onsubmit({preventDefault(){},currentTarget:form});await h.flush();assert.equal(h.calls[3].payload.clientRequestId,original.clientRequestId);assert.equal(h.calls[3].payload.targetLoad,60);h.calls[3].reject(Error('WRITE_STATUS_UNKNOWN'));await retry;
+});
 // Sanitized Edge55 response shape, never a copy of private user records.
 const enteredPr={...pr,version:'training-personal-records-goals-v1.2.0',semantics:'MAX_WEIGHT_AND_SINGLE_SET_VOLUME',comparisonVersion:'training-entered-load-v1'};
 test('Edge55 personal records traverse the real hosted transport and render both independent bests',async()=>{
